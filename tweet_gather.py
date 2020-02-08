@@ -38,7 +38,7 @@ api = tweepy.API(auth)
 # Apparently this is a thing that manages pagination for you
 # You use it with the twitter API methods
 # Example:
-# tw.Cursor(api.search, q=search_words, lang="en", since=date_since).items(5)
+# tweepy.Cursor(api.search, q=search_words, lang="en", since=date_since).items(5)
 # Basically you put the api method as api.method, and then you fill the rest of the
 # parentheses with the arguments
 
@@ -52,6 +52,7 @@ for tweet in public_tweets:
 
 # After this we can search tweets by hashtag
 # https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets
+
 
 
 
