@@ -88,8 +88,9 @@ def get_trends(woeid):
     with open(filename, "w") as output_file:
         json.dump(trends, output_file)
 
-    trend_info = pandas.read_json(trends)
-    trend_info = trend_info.drop(columns=["url", "query"])
+    trend_info = pd.read_json(trends)
+    trend_info.drop(columns=["url", "query"], inplace=True)
+    trend_info.replace("null", False, inplace=True)
 
     return None
 
