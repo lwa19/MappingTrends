@@ -1,14 +1,14 @@
-# generate a json file with consumer and access keys (dev account: @lwa19)
-
-import json
-
-# Enter your keys/secrets as strings in the following fields
-credentials = {}
-credentials['CONSUMER_KEY'] = 'K9VFm4Wd16nJjYsqCjbNEl3oN'
-credentials['CONSUMER_SECRET'] = 'B3dA5JQFRCXxHfKbcGJB8BR18RHRjM1LfZh5euWui66CPvKqeS'
-credentials['ACCESS_TOKEN'] = '623730595-7p4tdPla1EhlULAtn71mVWHYQR0Jm3LO2HaIEZnU'
-credentials['ACCESS_SECRET'] = '7bqovm47TzxXLl2e51EiFLLq8LGm0OCfqGOwNBFWA7tIS'
-
-# Save the credentials object to file
-with open("twitter_credentials.json", "w") as file:
-    json.dump(credentials, file)
+U2FsdGVkX1/of5t25wQsAN5acYs3YaakOiC3vDfqxaQhCcpIwL9XgDWw5LWWyYRj
+ArLuxSDfRNzduWRNK8Hvbzh4mKbXdqZvFZ6lPMtXp7RXJ+ahjKk9aXj3ODZs6YZG
+x43ecCe6laKrZCvRCRYGzQdNKMlKX7XqRWRUPuUKmN2vgwITmv0tSdRmiug0Si0R
+nwRECeMVcJ8+rHVs5camPqf+KBRw/VwoS2Uvc8Pj6Y0INWlsGerKvMmYcUJB6nVl
+1pKwQyTtSQIIp1e5ZonONi8DXMjgK16LBCgL1X7p6emlwRvKZjIYV+iC64MzwCMX
+a9enPIULgjPV4oRc79A5s6auVRBmPcQev8BehhMTDXVNO+iDBwLHCj7ndKHS/gUC
+FaT/pcIZCXdSovH46F1ySZ/cvs7K7VbWo0dPCjD3gSKJ0zxeSu8EzkywQ77xc78K
+gfC5HE1sgz1Ban2i2zdRhh3HbJ46rhjgVNFqMv9Hj5sFXeOBtzB0ixjkfVQeYnuh
+8JHuQBiL+7WU7kG6AFWH6zFEionczzzJDC+tYN9XAvfiRE2bP922++sXiE1K4DbQ
+OqICMWmHLSXI8m4XJJ36o1Hl2WV4ciT/Q1oI4rjOhRu4L5bdgvPNe1xr8NGV+TMG
+WUCNGdV4DUUqd8q9SG/UuhUbu3TiQupgfblwb4u9e1A/fizGg1RVgScG64Aj98I8
+ojYXBPFigy8kvCT5HAGStcjqtkqwJstYeoARkHXYs97oqs+QrpBFKLtuzzJD1zsC
+CTszl4W8FTCVylWe8f3dZM3eVTZlpTy8HO8oIiLqMbblHS8ZvDDQQ61ojNZ0tlmm
+xKyv+LY4kqs=
