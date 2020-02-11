@@ -3,9 +3,6 @@
 # Note: We are limited to 7 days of archive searching with the free API
 # https://developer.twitter.com/en/pricing
 
-# https://stackabuse.com/accessing-the-twitter-api-with-python/
-# https://stackoverflow.com/questions/3577399/python-twitter-library-which-one
-
 # http://www.mikaelbrunila.fi/2017/03/27/scraping-extracting-mapping-geodata-twitter/
 # https://www.earthdatascience.org/courses/earth-analytics-python/using-apis-natural-language-processing-twitter/get-and-use-twitter-data-in-python/
 
@@ -118,35 +115,56 @@ def search_words(input_hashtag, day_since=None, limit=100):
             history we're restricting the search to (*replace None with appropriate default value)
         ** What are other parameters we could include?
 
-    Returns: a collection of tweets in "SearchResults" object
+    Returns: 
+        tweets: a collection of tweets in "SearchResults" object
+        location_counts (dict): number of tweets for each location (for available data)
+        geotagged_ratio (float): proportion of tweets that are geotagged
+        profile_geotagged-ratio (float): proportion of tweets where user has profile location
     '''
-    # tweets = tw.Cursor(api.search,
-    #           q=search_words,
-    #           lang="en",
-    #           #since=day_since
-    #           ).items(limit)
-
     sample_size = 0
     geotags = 0
     profile_locs = 0
     # valid profile_locs = 0
-    locations = 0
+    tweets_with_locations = 0
     location_counts = {}
 
-    for tweet in tweepy.Cursor(api.search, q=search_words, lang="en").items(limit):
+    tweets = tweepy.Cursor(api.search, q=search_words, lang="en").items(limit)
+
+    for tweet in tweets:
         sample_size += 1
+        geotagged = False
+        profile_geotagged = False
 
-        if tweet["geo"] is not None:
-            geotags += 1
-            locations += 1
-        if tweet["user"]["location"] is not None:
-            profile_locs += 1
-            locations += 1
-
-        # map geotags/profile locs to states/cities
         # https://simplemaps.com/data/us-cities
         # add to location counts for each location
 
+        if tweet["geo"] is not None:
+            geotags += 1
+            tweets_with_locations += 1
+
+            # map geotags/profile locs to states/cities
+
+            if location in location_counts:
+                location_counts[location] = 1
+            else:
+                location_counts[location] += 1
+            geotagged = True
+
+        if tweet["user"]["location"] is not None:
+            profile_locs += 1
+            tweets_with_locations += 1
+
+            # map geotags/profile locs to states/cities
+
+            if location in location_counts and not geotagged:
+                location_counts[location] = 1
+            else:
+                location_counts[location] += 1
+    
+    geotagged_ratio = geotagged / tweets_with_locations
+    profile_geotagged_ratio = profile_geotagged / tweets_with_locations
+
+    return tweets, location_counts, geotagged_ratio, profile_geotagged_ratio
 
     # should we save then process tweets, or process locations while
     #   parsing the search results?
