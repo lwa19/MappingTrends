@@ -51,6 +51,18 @@ for tweet in public_tweets:
 # After this we can search tweets by hashtag and save the results
 # https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets
 
+def get_trends(woeid, incl_promoted=False):
+    '''
+    Get the current trends for a particular location.
+    Inputs:
+        woeid (int): "where on earth id" a 32-bit integer identifier for any location on earth
+        incl_promoted: boolean
+    Outputs: json file with trend names, tweet volume, and other pulled info.
+    '''
+    trends = tw.Cursor(api.trends_place, woeid)
+
+    return None
+
 def search_words(ui_input, day_since=None, limit=100):
     '''
     Use the cursor function to gather a collection of tweets associated with a hashtag
