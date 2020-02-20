@@ -131,3 +131,6 @@ dmypy.json
 # Twitter access token
 keys2json.py
 twitter_credentials.json
+
+# DS_Store
+.DS_Store
