@@ -127,3 +127,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Twitter access token
+keys2json.py
+twitter_credentials.json
