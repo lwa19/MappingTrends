@@ -1,5 +1,12 @@
 ##### Clean code that ABSOLUTELY WORKS 
 ############ DO NOT MODIFY! ###############
+'''
+How this function is supposed to work:
+- Input string (hashtag/word, the same string you'd put into the search bar on Twitter
+    - run: 'python3 tweet_gather_clean.py' in terminal
+    - Output JSON file of desired tweets
+    - Returns: the list of FULL tweets
+'''
 
 import tweepy as tw
 import json
@@ -15,7 +22,7 @@ auth.set_access_token(keys['ACCESS_TOKEN'], keys['ACCESS_SECRET'])
 api = tw.API(auth)
 
 # hashtag -> tweet collection (list of json objects)
-def search_words(input_hashtag, limit=100):
+def search_words(input_hashtag, limit=1000):
     collection = []
     # gathering a collection of tweets. Output: tweepy.cursor.ItemIterator
     tweets = tw.Cursor(api.search, 
