@@ -1,4 +1,4 @@
-############ DO NOT MODIFY! -- LW ###############
+############ DO NOT MODIFY!!! -- LW ###############
 
 import tweepy as tw
 import json
@@ -15,6 +15,16 @@ api = tw.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 # hashtag -> tweet collection (list of json objects)
 def search_words(input_query, limit=1000):
+    '''
+    Performs a generic query according to query input with no filtering. 
+
+    Input: 
+        input_query(str): a standard input to search bar
+        limit(int): max of tweets returned
+    
+    Returns: 
+        a list of tweets, each in json format (a json file is also outputted)
+    '''
     collection = []
     # gathering a collection of tweets. Output: tweepy.cursor.ItemIterator
     tweets = tw.Cursor(api.search, 
@@ -30,11 +40,25 @@ def search_words(input_query, limit=1000):
     # write list into json file
     file_name = input_query + '.json'
     with open(file_name, 'w') as outfile:
-        json.dump(collection, outfile)
+        json.dump(collection, outfile, indent=4)
 
     return collection
 
-def simplified_tweets(input_query, min_count=2, min_geo=0):
+def geo_tweets(input_query, min_count=100, min_geo=0):
+    '''
+    Filter for tweets with either geotag or profile location. Collected 
+    tweets only have relevant information (tweet.created_at,tweet.id_str,
+    tweet.text, tweet.user, tweet.coordinates, tweet.place). Datetime is 
+    converted to string for json storage.
+
+    Inputs: 
+        input_query (str): standard search bar input
+        min_count (int): the minimum tweets want to be returned
+        min_geo (int): the minimum geotagged tweets we want to be returned
+    
+    Returns: tuple of lists (all tweets, geotagged tweets, profile location 
+    tweets)
+    '''
     collection = []
     geotagged = []
     user_loc = []
@@ -72,7 +96,13 @@ def simplified_tweets(input_query, min_count=2, min_geo=0):
 
 def get_locations(tweets, tag='user'):
     '''
-    input for "type" needs to select 'user', 'coor', or 'geo')
+    Get location data from a list of tweets depending on category
+
+    Inputs: 
+        tweets (list): tweets with only essential information
+        tag (str): one of 'user', 'coor', or 'geo' 
+
+    Returns: a list of locations as strings (formatted strangely)
     '''
     locations = []
 
