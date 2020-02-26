@@ -1,40 +1,40 @@
 ### FOR STREAMING LIVE DATA ###
 
-import tweepy 
-from tweepy.streaming import StreamListener
-from tweepy import API
-from tweepy import Cursor 
-from tweepy import OAuthHandler
-from tweepy import Stream
+import tweepy as tw
+from tw.streaming import StreamListener
+from tw import API
+from tw import Cursor 
+from tw import OAuthHandler
+from tw import Stream
+import numpy as np 
+import pandas as pd 
 import json 
 
 ## AUTHENTICATING CLASS ##
 class Authenticate(keys_file):
 
-    def __init__(self):
-        pass
+    def __init__(self, keys_file):
+        self.key_file = keys_file
+        self.auth = self.authenticate_app()
+        self.api = self.give_api()
 
-    def authenticate_app(self, keys_file):
-        with open(keys_file, 'r') as f:
+    def authenticate_app(self):
+        with open(self.keys_file, 'r') as f:
             keys = json.load(f)
-        auth = tweepy.OAuthHandler(keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
+        auth = tw.OAuthHandler(keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
         auth.set_access_token(keys['ACCESS_TOKEN'], keys['ACCESS_SECRET'])
         return auth
 
     def give_api(self):
         auth = self.auth
-        api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
+        api = tw.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
         return api 
 
-
 ## LISTENER CLASS ## 
-class MyStreamListener(StreamListener):
+class MyStreamListener():
     
     def __init__(self, tweets_file):
         self.tweets_file = tweets_file
-    
-    def on_status(self, status):
-        print(status.text)
 
     def on_data(self, data):
         try:
@@ -45,31 +45,34 @@ class MyStreamListener(StreamListener):
             print("Error on_data: %s " % str(e))
         return True
 
-    def on_error(self, status_code):
+    def on_error(self, status_code): 
         if status_code == 420:
+            # to check if rate limit occurs
             return False
-
+        print(status_code.text)
 
 ## STREAMING CLASS ##
 class StreamNProcess():
     
     def __init__(self):
-        self.authenticator = Authenticate()
+        pass
 
-    def stream_live(self, tweets_file, input_hashtag):
-        #starting a stream 
+    def stream_live(self, tweets_file, input_hashtag, keys_file):
+        # starting a stream 
+        listener = MyStreamListener(tweets_file)
+        authenticator = Authenticate(keys_file)
+        api = authenticator.api
+        myStream = tw.Stream(auth = api.auth, listener=listener)
 
-        listener = MyStreamListener()
-        auth = self.Authenticate.authenticate_app(keys_file)
-        api = self.Authenticate.give_api(auth)
-        myStream = tweepy.Stream(auth = api.auth, listener=listener)
-        myStream.filter(track = [input_hashtag], is_async = True)
+        # we should think about taking advantage of the track as well as location arguments 
+        myStream.filter(track = [input_hashtag], is_async = True, locations = None, languages = None)
 
 
-def main_streaming_function(tweets_file, input_hashtag):
+def main_streaming_function(tweets_file, input_hashtag, keys_file):
 
     twitter_streamer = StreamNProcess()
-    twitter_streamer.stream_live(tweets_file, input_hashtag)
+    twitter_streamer.stream_live(tweets_file, input_hashtag, keys_file)
+
 
 
 '''
