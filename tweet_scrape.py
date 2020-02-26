@@ -62,24 +62,32 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
     collection = []
     geotagged = []
     user_loc = []
-    num_searched = 0
 
-    while len(collection) < min_count or len(geotagged) < min_geo:
-        for tweet in api.search(q=input_query, count=100, lang='en'):
+    tweets = tw.Cursor(api.search, 
+                       q=input_query,
+                       lang='en'
+                       ).items(1000)   
+    
+    # convert each tweet into a json object and add to collection (list)
+    for entry in tweets:
+        # print(type(entry))    --> <class 'tweepy.models.Status'>
+   
+        tweet = json.loads(json.dumps(entry._json))
         # Appending chosen tweet data:
-            item = (tweet.created_at,tweet.id_str,tweet.text, tweet.user, \
-                    tweet.coordinates, tweet.place)
+        item = (tweet['created_at'],tweet['id_str'],tweet['text'], \
+            tweet['user'], tweet['coordinates'], tweet['place'])
 
-            if item[-2] or item[-1]:
-                # then there is location data associated with this tweet
-                collection.append(item)
-                geotagged.append(item)
-            
-            elif item[3].location:
-                collection.append(item)
-                user_loc.append(item)
-            
-            num_searched += 1
+        if item[-2] or item[-1]:
+            # then there is location data associated with this tweet
+            collection.append(item)
+            geotagged.append(item)
+        
+        elif item[3].location:
+            collection.append(item)
+            user_loc.append(item)
+        
+        if len(collection) >= min_count and len(geotagged) >= min_geo:
+            break
     
     print(len(collection), len(geotagged), len(user_loc))
     tup = (collection, geotagged, user_loc)
