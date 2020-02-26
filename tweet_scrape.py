@@ -40,7 +40,7 @@ def search_words(input_query, limit=1000):
     # write list into json file
     file_name = input_query + '.json'
     with open(file_name, 'w') as outfile:
-        json.dump(collection, outfile, indent=4)
+        json.dump(collection, outfile)
 
     return collection
 
@@ -87,7 +87,7 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
     
     for ind, lst in enumerate(tup):
         file_name = input_query + '_' + cats[ind] + '.json'
-        json_str = json.dumps(lst, indent=4, default=str)
+        json_str = json.dumps(lst, default=str)
         with open(file_name, 'w') as outfile:
             json.dump(json_str, outfile)
 
