@@ -1,6 +1,0 @@
-{
-    "python.pythonPath": "C:\\Users\\Rachel\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe",
-    "python.linting.pylintEnabled": true,
-    "python.linting.enabled": true
-    "editor.rulers": [ 80 ]
-}
