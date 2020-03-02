@@ -133,15 +133,17 @@ def search_words(input_query, limit=1000):
     # convert each tweet into a json object and add to collection (list)
     for entry in tweets:
         # print(type(entry))    --> <class 'tweepy.models.Status'>
-        collection.append(json.dumps(entry._json))
+        collection.append(entry._json)
 
     # get timestamp (twitter timestamp has colon, cannot be used for filename)
     dt = datetime.now()
     formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
 
     # write list into json file
-    file_name = "tweets_{}_{}.json".format(input_hashtag, formatted_dt)
-    with open(file_name, 'w') as outfile:
+    file_name = "tweets_{}_{}.json".format(input_query, formatted_dt)
+
+    with open(file_name, 'a') as outfile:
+        # do not use json.dumps anywhere because it will string the dict
         json.dump(collection, outfile, indent=4)
 
     return collection
@@ -206,26 +208,27 @@ def read_location_info(database="uscities.csv"):
         them to states.
 
     Inputs: database (database from https://simplemaps.com/data/us-cities)
-    Outputs: dictionary mapping cities (values) to states (keys)
+    Outputs:
+        mapping_dict: maps cities (values) to states (keys)
+        abbr_dict: maps state abbreviations (values) to states (keys)
     '''
     location_data = pd.read_csv(database)
     mapping_dict = {}
+    abbr_dict ={}
 
     for index, row in location_data.iterrows():
-        if row["state_name"] not in mapping_dict:
+        if row["state_name"] not in mapping_dict.keys():
             mapping_dict[row["state_name"]] = set()
 
         mapping_dict[row["state_name"]].add(row["city"])
 
-    return mapping_dict
+        if row["state_name"] not in abbr_dict.values():
+            abbr_dict[row["state_id"]] = row["state_name"]
 
-# Currently only has code for home location parsing
-# Geotag parsing code coming soon
-# Will not work with the current structure of input json
-# (Look at the file and you'll see why. It's in a very weird format and I wanna
-# as Matthew how to fix it)
-# Code commented out so it doesn't break the file upon import
-def convert_location(tweet_data, mapping_dict,  scale="state"):
+    return mapping_dict, abbr_dict
+
+
+def convert_location(tweet_data, mapping_dict, abbr_dict):
     '''
     Given a scale input of county or state:
         Assigns country/state location to each geotagged tweet.
@@ -233,46 +236,85 @@ def convert_location(tweet_data, mapping_dict,  scale="state"):
           corresponding county/state to the tweet.
 
     Inputs:
-        tweet_data: a json file
+        tweet_data: a list of tweet-json dictionaries
         mapping_dict: a dictionary mapping cities (values) to states (keys)
-        scale (str): sets scale to convert locations to
-          only county/state recognized)
+        abbr_dict: a dictionary mapping abbreviations (keys) to states (values)
 
     Outputs:
         output_data: a json file with the state_loc or county_loc
           fields added to each tweet
     '''
     # initialise counts dictionary
-    # location_counts = {}
-    # for state in mapping_dict.keys():
-    #     location_counts[state] = 0
+    location_counts = {}
+    for state in mapping_dict.keys():
+        location_counts[state] = 0
 
-    # for tweet in batch:
-        # extracting info (placeholder, will be changed to fit the exact input
-        # format), assume that the data is returned
+    # if replacing the direct input with a file
+    # with open(tweet_data) as input_file:
+    #     tweet_data = json.load(input_file)
+
+    for tweet in tweet_data:
+
         # geotag = tweet["place"]["name"]
         # home_location = tweet["user"]["location"]
 
-        # if geotag:
-        #     to_convert = geotag
-        # elif home_location
-        #     to_convert = home_location
+        # check if geotag exists
+        if tweet["place"]:
+            # only considers tweets from US
+            if tweet["place"]["country"] == "United States":
+                coordinates = tweet["place"]["bounding_box"]["coordinates"]
+                state = geotag_state(coordinates)
+                if state:
+                    location_counts[state] += 1
 
-        # location_words = home_location.split(" ")
-        # location_words = location_words.strip(",")
+        # checks if home location field is filled
+        elif tweet["user"]["location"]:
+            home_location = tweet["user"]["location"]
+            state = parse_home_location(home_location, mapping_dict, abbr_dict)
+            if state:
+                location_counts[state] += 1
 
-        # for word in location_words:
-        #     if word in location_counts.keys():
-        #         location_counts[word] += 1
-        #         break
-        #     elif word in location_abbr:
-        #         location_counts[word] += 1
-        #         break
-        #     else:
-        #         for state, cities in mapping_dict.items():
-        #             if word in cities:
-        #                 location_counts[state] += 1
-        #                 break
-        #         break
+    return location_counts
 
-        # return location_counts
+def geotag_state(coordinates):
+    '''
+    Determines the US state a set of coordinates corresponds to.
+    '''
+
+def parse_home_location(string, mapping_dict, abbr_dict):
+    '''
+    Recgonizes location phrases from a string (the user's home location).
+    Priority is state abbreviation first, then state name, then city names.
+
+    Inputs:
+        string: the user's home location
+        mapping_dict: {state_name: [list of cities], ...}
+        abbr_dict: {state_abbr: state_name, ...}
+
+    Output:
+        state(str): the state the user's home location is associated with
+
+    Problem cases (treated as program limitations):
+        1) a city which contains a word for a state will be treated 
+           as the state if no state is recognized
+        2) if multiple cities have the same name, it will be treated as
+           the first city it the dictionary it encounters
+        3) if a city name contains the name of another city in it, it may
+           recognize the substring first and return the state of that city
+    '''
+    for state in mapping_dict.keys():
+        if state in string:
+            return state
+
+    for abbr, state in abbr_dict.items():
+        if abbr in string:
+            return state
+
+    for state, cities in mapping_dict.items():
+        for city in cities:
+            if city in string:
+                return state
+
+    return None
+
+
