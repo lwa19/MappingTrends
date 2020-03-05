@@ -134,3 +134,5 @@ twitter_credentials.json
 
 # DS_Store
 .DS_Store
+*.json
+*.ipynb

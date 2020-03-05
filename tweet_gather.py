@@ -10,10 +10,9 @@
 # http://docs.tweepy.org/en/latest/api.html
 
 # import necessary libraries
-# from datetime import datetime
+from datetime import datetime
 import tweepy as tw
 import pandas as pd
-import datetime
 import json
 
 # obtain consumer and access keys from json
@@ -47,6 +46,8 @@ for tweet in public_tweets:
 # Install Notepad++
 # Plugins -> Plugins Admin -> Install JSON Viewer
 # Open JSON file then go to plugins -> JSON Viewer -> Format JSON
+# This doesn't always work. If it doesn't there's an issue with the
+# JSON formatting that will probably screw the function up
 
 ##### REMOVED DUE TO RESTRUCTURING FRAMEWORK
 #
@@ -92,99 +93,142 @@ def get_trends(woeid=23424977):
 
     Outputs:
         json file saved with current date and time
-        trend_info: pandas dataframe w/columns for trend name, tweet volume,
-            and promoted content info
+        trend_info: pandas dataframe for trend data
     '''
-    # trends_json = api.trends_place(woeid)
+    trends_json = api.trends_place(woeid)
 
-    # dt = datetime.now()
-    # formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
-    # # tw_datetime = trends_json[0]["created_at"] # issue with colon character
-    # filename = "trends_{}_{}.json".format(woeid, formatted_dt)
-    # with open(filename, "w") as output_file:
-    #     json.dump(trends_json, output_file)
+    # getting date/time for filename
+    dt = datetime.now()
+    formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
+    # tw_datetime = trends_json[0]["created_at"] # issue with colon character
 
-    # trends = trends_json[0]["trends"] # list of dictionaries
+    # writing file
+    filename = "trends_{}_{}.json".format(woeid, formatted_dt)
+    with open(filename, "w") as output_file:
+        json.dump(trends_json, output_file, indent=4)
 
-    # trend_info = pd.read_json(trends)
-    # trend_info.drop(columns=["url", "query"], inplace=True)
-    # trend_info.replace(None, False, inplace=True)
+    trends = trends_json[0]["trends"] # list of dictionaries
 
-    # return trend_info
+    return pd.DataFrame(trends)
 
-######### Should be replaced by Leah's simpler function #####################
-######### Reuse concept for counting code in separate counting function #####
 
-# def search_words(input_hashtag, day_since=None, limit=100):
+def search_words(input_query, limit=1000):
     '''
-    Use the cursor function to gather a collection of tweets associated with a hashtag
-    (Function currently collects estimate of geotags/profile locs per dataset)
+    Performs a generic query according to query input with no filtering.
 
-    https://developer.twitter.com/en/docs/tweets/search/api-reference/get-search-tweets
-    Inputs:
-        input_hashtag (string): hashtag that the user entered (*potential: we could check to 
-            see if they included '#')
-        date_since (???) : optional parameter; specifies how long back in the tweet 
-            history we're restricting the search to (*replace None with appropriate default value)
-        ** What are other parameters we could include?
+    Input:
+        input_query(str): a standard input to search bar
+        limit(int): max of tweets returned
 
     Returns:
-        tweets: a collection of tweets in "SearchResults" object
-        location_counts (dict): number of tweets for each location (for available data)
-        geotagged_ratio (float): proportion of tweets that are geotagged
-        profile_geotagged-ratio (float): proportion of tweets where user has profile location
+        a list of tweets, each in json format (a json file is also outputted)
     '''
-    # sample_size = 0
-    # geotags = 0
-    # profile_locs = 0
-    # # valid profile_locs = 0
-    # tweets_with_locations = 0
-    # location_counts = {}
+    collection = []
+    # gathering a collection of tweets. Output: tweepy.cursor.ItemIterator
+    tweets = tw.Cursor(api.search,
+                       q=input_query,
+                       lang='en'
+                       ).items(limit)
 
-    # tweets = tweepy.Cursor(api.search, q=search_words, lang="en").items(limit)
+    # convert each tweet into a json object and add to collection (list)
+    for entry in tweets:
+        # print(type(entry))    --> <class 'tweepy.models.Status'>
+        collection.append(entry._json)
 
-    # for tweet in tweets:
-    #     sample_size += 1
-    #     geotagged = False
-    #     profile_geotagged = False
+    # get timestamp (twitter timestamp has colon, cannot be used for filename)
+    dt = datetime.now()
+    formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
 
-    #     # https://simplemaps.com/data/us-cities
-    #     # add to location counts for each location
+    # write list into json file
+    file_name = "tweets_{}_{}.json".format(input_query, formatted_dt)
 
-    #     if tweet["geo"] is not None:
-    #         geotags += 1
-    #         tweets_with_locations += 1
+    with open(file_name, 'a') as outfile:
+        # do not use json.dumps anywhere because it will string the dict
+        json.dump(collection, outfile, indent=4)
 
-    #         # map geotags/profile locs to states/cities
+    return collection
 
-    #         if location in location_counts:
-    #             location_counts[location] = 1
-    #         else:
-    #             location_counts[location] += 1
-    #         geotagged = True
+def geo_tweets(input_query, min_count=100, min_geo=0):
+    '''
+    Filter for tweets with either geotag or profile location. Collected
+    tweets only have relevant information (tweet.created_at,tweet.id_str,
+    tweet.text, tweet.user, tweet.coordinates, tweet.place). Datetime is
+    converted to string for json storage.
 
-    #     if tweet["user"]["location"] is not None:
-    #         profile_locs += 1
-    #         tweets_with_locations += 1
+    Inputs:
+        input_query (str): standard search bar input
+        min_count (int): the minimum tweets want to be returned
+        min_geo (int): the minimum geotagged tweets we want to be returned
 
-    #         # map geotags/profile locs to states/cities
+    Returns: tuple of lists (all tweets, geotagged tweets, profile location
+    tweets)
+    '''
+    collection = []
+    geotagged = []
+    user_loc = []
+    num_searched = 0
 
-    #         if location in location_counts and not geotagged:
-    #             location_counts[location] = 1
-    #         else:
-    #             location_counts[location] += 1
+    while len(collection) < min_count or len(geotagged) < min_geo:
+        for tweet in api.search(q=input_query, count=100, lang='en'):
+        # Appending chosen tweet data:
+            item = (tweet.created_at, tweet.id_str, tweet.text, tweet.user, \
+                    tweet.coordinates, tweet.place)
 
-    # geotagged_ratio = geotagged / tweets_with_locations
-    # profile_geotagged_ratio = profile_geotagged / tweets_with_locations
+            if item[-2] or item[-1]:
+                # then there is location data associated with this tweet
+                collection.append(item)
+                geotagged.append(item)
 
-    # return tweets, location_counts, geotagged_ratio, profile_geotagged_ratio
+            elif item[3].location:
+                collection.append(item)
+                user_loc.append(item)
+
+            num_searched += 1
+
+    print(len(collection), len(geotagged), len(user_loc))
+    tup = (collection, geotagged, user_loc)
+    cats = ['all', 'geotagged', 'user_loc']
+
+    # get timestamp (twitter timestamp has colon, cannot be used for filename)
+    dt = datetime.now()
+    formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
+
+    for ind, lst in enumerate(tup):
+        file_name = "{}_{}_{}.json".format(input_query, cats[ind], formatted_dt)
+        json_str = json.dumps(lst, default=str)
+        with open(file_name, 'w') as outfile:
+            json.dump(json_str, outfile, indent=4)
+
+    return collection, geotagged, user_loc
 
 
-# The results will be in a JSON file
-# https://developer.twitter.com/en/docs/tweets/data-dictionary/overview/intro-to-tweet-json
+def read_location_info(database="uscities.csv"):
+    '''
+    Converts location data for all US cities into a dictionary format mapping
+        them to states.
+
+    Inputs: database (database from https://simplemaps.com/data/us-cities)
+    Outputs:
+        mapping_dict: maps cities (values) to states (keys)
+        abbr_dict: maps state abbreviations (values) to states (keys)
+    '''
+    location_data = pd.read_csv(database)
+    mapping_dict = {}
+    abbr_dict ={}
+
+    for index, row in location_data.iterrows():
+        if row["state_name"] not in mapping_dict.keys():
+            mapping_dict[row["state_name"]] = set()
+
+        mapping_dict[row["state_name"]].add(row["city"])
+
+        if row["state_name"] not in abbr_dict.values():
+            abbr_dict[row["state_id"]] = row["state_name"]
+
+    return mapping_dict, abbr_dict
 
 
-def convert_location(data, scale="state"):
+def convert_location(tweet_data, mapping_dict, abbr_dict):
     '''
     Given a scale input of county or state:
         Assigns country/state location to each geotagged tweet.
@@ -192,22 +236,85 @@ def convert_location(data, scale="state"):
           corresponding county/state to the tweet.
 
     Inputs:
-        data: a json file
-        scale (str): sets scale to convert locations to
-          only county/state recognized)
+        tweet_data: a list of tweet-json dictionaries
+        mapping_dict: a dictionary mapping cities (values) to states (keys)
+        abbr_dict: a dictionary mapping abbreviations (keys) to states (values)
 
     Outputs:
         output_data: a json file with the state_loc or county_loc
           fields added to each tweet
     '''
-    location_data = pd.read_csv("locations/uscities.csv")
+    # initialise counts dictionary
+    location_counts = {}
+    for state in mapping_dict.keys():
+        location_counts[state] = 0
 
-    # for tweet in batch:
+    # if replacing the direct input with a file
+    # with open(tweet_data) as input_file:
+    #     tweet_data = json.load(input_file)
 
-    #     geotag = tweet["place"]["name"]
-    #     home_location = tweet["user"]["location"]
+    for tweet in tweet_data:
 
-    #     if geotag:
-    #         to_convert = geotag
-    #     elif:
-    #         to_convert = home_location
+        # geotag = tweet["place"]["name"]
+        # home_location = tweet["user"]["location"]
+
+        # check if geotag exists
+        if tweet["place"]:
+            # only considers tweets from US
+            if tweet["place"]["country"] == "United States":
+                coordinates = tweet["place"]["bounding_box"]["coordinates"]
+                state = geotag_state(coordinates)
+                if state:
+                    location_counts[state] += 1
+
+        # checks if home location field is filled
+        elif tweet["user"]["location"]:
+            home_location = tweet["user"]["location"]
+            state = parse_home_location(home_location, mapping_dict, abbr_dict)
+            if state:
+                location_counts[state] += 1
+
+    return location_counts
+
+def geotag_state(coordinates):
+    '''
+    Determines the US state a set of coordinates corresponds to.
+    '''
+
+def parse_home_location(string, mapping_dict, abbr_dict):
+    '''
+    Recgonizes location phrases from a string (the user's home location).
+    Priority is state abbreviation first, then state name, then city names.
+
+    Inputs:
+        string: the user's home location
+        mapping_dict: {state_name: [list of cities], ...}
+        abbr_dict: {state_abbr: state_name, ...}
+
+    Output:
+        state(str): the state the user's home location is associated with
+
+    Problem cases (treated as program limitations):
+        1) a city which contains a word for a state will be treated 
+           as the state if no state is recognized
+        2) if multiple cities have the same name, it will be treated as
+           the first city it the dictionary it encounters
+        3) if a city name contains the name of another city in it, it may
+           recognize the substring first and return the state of that city
+    '''
+    for state in mapping_dict.keys():
+        if state in string:
+            return state
+
+    for abbr, state in abbr_dict.items():
+        if abbr in string:
+            return state
+
+    for state, cities in mapping_dict.items():
+        for city in cities:
+            if city in string:
+                return state
+
+    return None
+
+
