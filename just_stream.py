@@ -1,4 +1,7 @@
 ### STREAMING LIVE DATA ###
+### to use this section make sure to set which file to extract keys 
+### by changing keys_file and then use just_stream.stream_tweets('input_hashtag')
+
 import tweepy
 import json
 
