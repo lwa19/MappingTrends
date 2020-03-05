@@ -1,20 +1,17 @@
 ### FOR STREAMING LIVE DATA ###
 
 import tweepy as tw
-from tw.streaming import StreamListener
-from tw import API
-from tw import Cursor 
-from tw import OAuthHandler
-from tw import Stream
 import numpy as np 
 import pandas as pd 
 import json 
 
+keys_file = 'twitter_credentials_template.json'
+
 ## AUTHENTICATING CLASS ##
-class Authenticate(keys_file):
+class Authenticate():
 
     def __init__(self, keys_file):
-        self.key_file = keys_file
+        self.keys_file = keys_file
         self.auth = self.authenticate_app()
         self.api = self.give_api()
 
@@ -68,25 +65,12 @@ class StreamNProcess():
         myStream.filter(track = [input_hashtag], is_async = True, locations = None, languages = None)
 
 
-def main_streaming_function(tweets_file, input_hashtag, keys_file):
+def main_streaming_function(input_hashtag, keys_file):
 
     twitter_streamer = StreamNProcess()
-    twitter_streamer.stream_live(tweets_file, input_hashtag, keys_file)
+    twitter_streamer.stream_live(input_hashtag, keys_file)
 
 
-
-'''
-    live_tweets_list = []
-    for a_tweet in streamed_tweets:
-        live_tweets_list.append(json.dumps(a_tweet._json))
-
-    #convert tweets to json as in search_words
-    file_name = input_hashtag + '.json'
-    with open(file_name, 'w') as outfile:
-        json.dump(live_tweets_list, outfile, indent = 4)
-
-    return live_tweets_list
-'''
 
 
 
