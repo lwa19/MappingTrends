@@ -1,10 +1,11 @@
+### STREAMING LIVE DATA ###
 import tweepy
 import json
 
 ### choose keys file ###
 keys_file = 'twitter_credentials_template.json'
 
-### AUTHENTICATION ###
+### authentication ###
 with open(keys_file, 'r') as f:
     keys = json.load(f)
 
@@ -12,6 +13,7 @@ auth = tweepy.OAuthHandler(keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
 auth.set_access_token(keys['ACCESS_TOKEN'], keys['ACCESS_SECRET'])
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
+### stream listener class ### 
 class MyStreamListener(tweepy.StreamListener):
     
     
@@ -31,7 +33,7 @@ class MyStreamListener(tweepy.StreamListener):
             return False
         print(status_code.text)
 
-def main_function(input_hashtag):
+def stream_tweets(input_hashtag):
 	listener = MyStreamListener()
 
 	stream = tweepy.Stream(auth, listener)
