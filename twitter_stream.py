@@ -1,11 +1,23 @@
 ### FOR STREAMING LIVE DATA ###
 
 import tweepy as tw
+<<<<<<< Updated upstream
+=======
+# from tw import StreamListener
+# from tw import API
+# from tw import Cursor 
+# from tw import OAuthHandler
+# from tw import Stream
+>>>>>>> Stashed changes
 import numpy as np 
 import pandas as pd 
 import json 
 
+<<<<<<< Updated upstream
 keys_file = 'twitter_credentials_template.json'
+=======
+keys_file = "twitter_credentials_template.json"
+>>>>>>> Stashed changes
 
 ## AUTHENTICATING CLASS ##
 class Authenticate():
