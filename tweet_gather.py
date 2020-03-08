@@ -223,6 +223,16 @@ def read_location_info(database="uscities.csv"):
 
 # Consider representing each state as an object of the State class to hold all
 # the information instead.
+# class State:
+#     def __init__(self):
+#         self.name = None
+#         self.abbr = None
+#         self.all_cities = set()
+#         self.tweeted_cities = {} # {"city1": tweets, ...}
+#         self.total_tweets = 0
+
+# function that looks up coordinates for each city in self.tweeted_cities
+# returns tuple of (cityname, tweets, lat, lng)
 
 def convert_location(tweet_data, mapping_dict, abbr_dict):
     '''
