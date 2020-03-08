@@ -42,40 +42,24 @@ for tweet in public_tweets:
     print(tweet.text)
 '''
 
-# Tips for JSON readability
+# Tips for JSON readability (if not indented during output)
 # Install Notepad++
 # Plugins -> Plugins Admin -> Install JSON Viewer
 # Open JSON file then go to plugins -> JSON Viewer -> Format JSON
 # This doesn't always work. If it doesn't there's an issue with the
 # JSON formatting that will probably screw the function up
 
-##### REMOVED DUE TO RESTRUCTURING FRAMEWORK
-#
-# def get_data(locations, promoted=False):
-#     '''
-#     Function that requests and saves a batch of trend data.
-
-#     Inputs:
-#         locations: list of woeids for the desired locations
-#         promoted: boolean on whether to include promoted tweets
-#     '''
-#     # Get trends for a location (loop over all locations)
-#     # Note: Need to have a list of US woeids as our default batch
-#     # Get tweets for each trend (loop over all trends)
-
-#     # Question of if we're keeping track of trends by location or
-#     # if we're just getting global trends then mapping tweet volume spread
-#     for woeid in locations:
-#         trends = get_trends(woeid)
-
-#         for trend in trends.name:
-#             search_words(trend)
+def collect_data(search_term, type, timespan):
+    '''
+    "Go" function that runs the necessary helper functions in sequence in
+    response to the inputs given by the user.
+    '''
 
 
 def get_trends(woeid=23424977):
     '''
     Optional function. Not part of the program's primary use but useful
-        to get starting points
+    to get starting points
 
     Get current trends for a particular location.
     Saves as json file with current date and time.
@@ -83,9 +67,6 @@ def get_trends(woeid=23424977):
 
     Note: There is no way to get past trends without using third party
     archive websites, which only save trend names.
-
-    https://developer.twitter.com/en/docs/trends/trends-for-location/api-reference/get-trends-place
-    http://docs.tweepy.org/en/latest/api.html#trends-methods
 
     Inputs:
         woeid (int): "where on earth id" a 32-bit integer identifier for
@@ -148,6 +129,7 @@ def search_words(input_query, limit=1000):
 
     return collection
 
+
 def geo_tweets(input_query, min_count=100, min_geo=0):
     '''
     Filter for tweets with either geotag or profile location. Collected
@@ -204,29 +186,43 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
 
 def read_location_info(database="uscities.csv"):
     '''
-    Converts location data for all US cities into a dictionary format mapping
-        them to states.
+    Reads in location data for US cities and returns dictionaries that map
+    cities and state abbreviations to states, as well as a dictionary with the
+    coordinates for the largest city by population in the state.
 
     Inputs: database (database from https://simplemaps.com/data/us-cities)
     Outputs:
-        mapping_dict: maps cities (values) to states (keys)
-        abbr_dict: maps state abbreviations (values) to states (keys)
+        mapping_dict: {state1: {city1, city2 ...}, ...}
+        abbr_dict: {id1: state1, ...}
+        state_coords = {state1: (city, pop, lat, lon), ...}
     '''
     location_data = pd.read_csv(database)
     mapping_dict = {}
-    abbr_dict ={}
+    abbr_dict = {}
+    state_coords = {}
 
     for index, row in location_data.iterrows():
-        if row["state_name"] not in mapping_dict.keys():
-            mapping_dict[row["state_name"]] = set()
+        state = row["state_name"]
+        city = row["city"]
+        abbr = row["state_id"]
+        pop = row["population"]
+        lat = row["lat"]
+        lng = row["lng"]
 
-        mapping_dict[row["state_name"]].add(row["city"])
+        if state not in mapping_dict.keys():
+            mapping_dict[state] = set()
+            abbr_dict[abbr] = state
+            state_coords[state] = (None, 0, None, None)
 
-        if row["state_name"] not in abbr_dict.values():
-            abbr_dict[row["state_id"]] = row["state_name"]
+        mapping_dict[state].add(city)
 
-    return mapping_dict, abbr_dict
+        if pop > state_coords[state][1]:
+            state_coords[state] = (city, pop, lat, lng)
 
+    return mapping_dict, abbr_dict, state_coords
+
+# Consider representing each state as an object of the State class to hold all
+# the information instead.
 
 def convert_location(tweet_data, mapping_dict, abbr_dict):
     '''
@@ -254,21 +250,19 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
     #     tweet_data = json.load(input_file)
 
     for tweet in tweet_data:
-
-        # geotag = tweet["place"]["name"]
-        # home_location = tweet["user"]["location"]
-
         # check if geotag exists
-        if tweet["place"]:
-            # only considers tweets from US
-            if tweet["place"]["country"] == "United States":
-                coordinates = tweet["place"]["bounding_box"]["coordinates"]
-                state = geotag_state(coordinates)
-                if state:
-                    location_counts[state] += 1
+        # if tweet["place"]:
+        #     # only considers tweets from US
+        #     if tweet["place"]["country"] == "United States":
+        #         coordinates = tweet["place"]["bounding_box"]["coordinates"]
+        #         state = geotag_state(coordinates)
+        #         if state:
+        #             location_counts[state] += 1
+        # need to check sth with geotag info consistency first
 
         # checks if home location field is filled
-        elif tweet["user"]["location"]:
+        # elif tweet["user"]["location"]:
+        if tweet["user"]["location"]:
             home_location = tweet["user"]["location"]
             state = parse_home_location(home_location, mapping_dict, abbr_dict)
             if state:
@@ -276,10 +270,12 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
 
     return location_counts
 
+
 def geotag_state(coordinates):
     '''
     Determines the US state a set of coordinates corresponds to.
     '''
+
 
 def parse_home_location(string, mapping_dict, abbr_dict):
     '''
@@ -295,7 +291,7 @@ def parse_home_location(string, mapping_dict, abbr_dict):
         state(str): the state the user's home location is associated with
 
     Problem cases (treated as program limitations):
-        1) a city which contains a word for a state will be treated 
+        1) a city which contains a word for a state will be treated
            as the state if no state is recognized
         2) if multiple cities have the same name, it will be treated as
            the first city it the dictionary it encounters
