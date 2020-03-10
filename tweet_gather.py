@@ -52,7 +52,9 @@ def collect_data(search_term, mode, interval, endpoint):
         batch.reverse()     
 
         # Create a new directory and put the divided json files into it
-        outdir = search_term
+        dt = datetime.now(timezone.utc)
+        formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
+        outdir = "tweets_{}_{}.json".format(search_term, formatted_dt)
         if not os.path.exists(outdir):
             os.mkdir(outdir)
 
