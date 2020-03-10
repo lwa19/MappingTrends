@@ -10,10 +10,12 @@
 # http://docs.tweepy.org/en/latest/api.html
 
 # import necessary libraries
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
+import os
 import tweepy as tw
 import pandas as pd
 import json
+import pytz
 
 # obtain consumer and access keys from json
 with open('twitter_credentials.json', 'r') as f:
@@ -25,39 +27,100 @@ auth.set_access_token(keys['ACCESS_TOKEN'], keys['ACCESS_SECRET'])
 api = tw.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
-def collect_data(search_term, mode, timespan, endpoint):
+def collect_data(search_term, mode, interval, endpoint):
     '''
     "Go" function that runs the necessary helper functions in sequence in
     response to the inputs given by the user.
+
+    search_term (str): input from the user
+    mode (str): 'live', 'past'
+    interval (int): minutes
+    endpoint (int): minutes
+
+    Datetime offset-naive and offset-aware solved by link:
+
     '''
-    bins = time_bins(mode, timespan, endpoint)
+    #utc = pytz.UTC
+    bins = time_bins(mode, interval, endpoint)
     # load mapping dict
     # load abbr dict
-    tweet_data = []
+    # tweet_data = []
 
-    for period in bins:
-        before, after = period
+    if mode == "past":
+        # Collect tweets from the past in ascending time
+        batch = search_words(search_term)
+        batch.reverse()     
 
-        if mode == "past"
-            batch = search_words(search_term, before, after)
-        elif mode == "live":
+        # Create a new directory and put the divided json files into it
+        outdir = search_term
+        if not os.path.exists(outdir):
+            os.mkdir(outdir)
+
+        # Filter through the tweets in the batch to separate time intervals
+        ind_bin = 0
+
+        while ind_bin < len(bins):
+            coll = []
+            start, end = bins[ind_bin]
+
+            for tweet in batch:
+                time = tweet['created_at']
+                time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
+                
+                if start <= time <= end:
+                    coll.append(tweet)
+                    continue
+                elif time > end:
+                    # write the completed bin to json file
+                    file_name = search_term + '_' + str(ind_bin)
+                    with open(os.path.join(outdir, file_name), 'a') as outfile:
+                        json.dump(coll, outfile, indent=4)    
+                    
+                    # go to the next bin:
+                    ind_bin += 1 
+                    break
+      
+        #elif mode == "live":
             # call stream start and stop functions
-        state_counts = convert_location(batch, mapping_dict, abbr_dict)
-        tweet_data.append(state_counts)
+        #state_counts = convert_location(batch, mapping_dict, abbr_dict)
+        #tweet_data.append(state_counts)
 
-    data_array = pd.DataFrame(tweet_data)
-    data_array = data_array.transpose()
+    #data_array = pd.DataFrame(tweet_data)
+    #data_array = data_array.transpose()
     # name the bins
 
-    return data_array
+    return bins
 
 
-def time_bins(mode, timespan, endpoint):
+def time_bins(mode, interval, endpoint):
     '''
     Determines the time bin for each batch of tweets
-    '''
 
-def search_words(input_query, lang="en", limit=1000, entities=False):
+    Inputs:
+
+    Returns: a list of tuples with format (start_time, end_time) in datetime format.
+    Each tuple represents a time interval
+    '''
+    # Calculate the number of intervals specified
+    num_bins = int(float(endpoint) / interval)    # round down division
+
+    # Calculate the start time of the historical search
+    now = datetime.now(timezone.utc)
+    duration = timedelta(minutes=endpoint)
+    start = now - duration
+    interval = timedelta(minutes=interval)
+
+    # specify time intervals:
+    bins = []
+    for _ in range(num_bins):
+        end = start + interval
+        bins.append((start, end))
+        start = end
+    
+    return bins
+
+
+def search_words(input_query, lang="en", limit=100, entities=False):
     '''
     Performs a generic query according to query input with no filtering.
 
@@ -93,7 +156,7 @@ def search_words(input_query, lang="en", limit=1000, entities=False):
 
     return collection
 
-class MyStreamListener(tweepy.StreamListener):
+class MyStreamListener(tw.StreamListener):
     
     def on_data(self, data):
         try:
@@ -115,7 +178,7 @@ class MyStreamListener(tweepy.StreamListener):
 def stream_tweets(input_hashtag):
     listener = MyStreamListener()
 
-    stream = tweepy.Stream(auth, listener)
+    stream = tw.Stream(auth, listener)
 
     stream.filter(track = [input_hashtag])
 
