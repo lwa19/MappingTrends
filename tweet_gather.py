@@ -30,7 +30,7 @@ def collect_data(search_term, mode, timespan, endpoint):
     "Go" function that runs the necessary helper functions in sequence in
     response to the inputs given by the user.
     '''
-    bins = time_bins(mode, timespan, endpoint)
+    # bins = time_bins(mode, timespan, endpoint)
     # load mapping dict
     # load abbr dict
     tweet_data = []
@@ -39,8 +39,10 @@ def collect_data(search_term, mode, timespan, endpoint):
         before, after = period
 
         if mode == "past"
-            batch = search_words(search_term, before, after)
+            # batch = search_words(search_term, before, after)
+            batch = search_words(search_term)
         elif mode == "live":
+            pass
             # call stream start and stop functions
         state_counts = convert_location(batch, mapping_dict, abbr_dict)
         tweet_data.append(state_counts)
@@ -56,6 +58,7 @@ def time_bins(mode, timespan, endpoint):
     '''
     Determines the time bin for each batch of tweets
     '''
+    return None
 
 def search_words(input_query, lang="en", limit=1000, entities=False):
     '''
@@ -171,6 +174,7 @@ def geotag_state(coordinates):
     '''
     Determines the US state a set of coordinates corresponds to.
     '''
+    return None
 
 
 def parse_home_location(string, mapping_dict, abbr_dict):
@@ -204,12 +208,52 @@ def parse_home_location(string, mapping_dict, abbr_dict):
         if abbr in string:
             return state
 
+    # Temporary. Possibly using a library to make this more efficient
     for state, cities in mapping_dict.items():
         for city in cities:
             if city in string:
                 return state
 
     return None
+
+# Will eventually be superseded by loading csv files with the results of this
+# that we want instead of running this function every time
+def read_location_info(database="uscities.csv"):
+    '''
+    Reads in location data for US cities and returns dictionaries that map
+    cities and state abbreviations to states, as well as a dictionary with the
+    coordinates for the largest city by population in the state.
+
+    Inputs: database (database from https://simplemaps.com/data/us-cities)
+    Outputs:
+        mapping_dict: {state1: {city1, city2 ...}, ...}
+        abbr_dict: {id1: state1, ...}
+        state_coords = {state1: (city, pop, lat, lon), ...}
+    '''
+    location_data = pd.read_csv(database)
+    mapping_dict = {}
+    abbr_dict = {}
+    state_coords = {}
+
+    for index, row in location_data.iterrows():
+        state = row["state_name"]
+        city = row["city"]
+        abbr = row["state_id"]
+        pop = row["population"]
+        lat = row["lat"]
+        lng = row["lng"]
+
+        if state not in mapping_dict.keys():
+            mapping_dict[state] = set()
+            abbr_dict[abbr] = state
+            state_coords[state] = (None, 0, None, None)
+
+        mapping_dict[state].add(city)
+
+        if pop > state_coords[state][1]:
+            state_coords[state] = (city, pop, lat, lng)
+
+    return mapping_dict, abbr_dict, state_coords
 
 # ARCHIVED FUNCTIONS
 
@@ -302,44 +346,6 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
             json.dump(json_str, outfile, indent=4)
 
     return collection, geotagged, user_loc
-
-
-def read_location_info(database="uscities.csv"):
-    '''
-    Reads in location data for US cities and returns dictionaries that map
-    cities and state abbreviations to states, as well as a dictionary with the
-    coordinates for the largest city by population in the state.
-
-    Inputs: database (database from https://simplemaps.com/data/us-cities)
-    Outputs:
-        mapping_dict: {state1: {city1, city2 ...}, ...}
-        abbr_dict: {id1: state1, ...}
-        state_coords = {state1: (city, pop, lat, lon), ...}
-    '''
-    location_data = pd.read_csv(database)
-    mapping_dict = {}
-    abbr_dict = {}
-    state_coords = {}
-
-    for index, row in location_data.iterrows():
-        state = row["state_name"]
-        city = row["city"]
-        abbr = row["state_id"]
-        pop = row["population"]
-        lat = row["lat"]
-        lng = row["lng"]
-
-        if state not in mapping_dict.keys():
-            mapping_dict[state] = set()
-            abbr_dict[abbr] = state
-            state_coords[state] = (None, 0, None, None)
-
-        mapping_dict[state].add(city)
-
-        if pop > state_coords[state][1]:
-            state_coords[state] = (city, pop, lat, lng)
-
-    return mapping_dict, abbr_dict, state_coords
 
 
 # NOTES
