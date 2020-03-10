@@ -9,6 +9,8 @@ import shapefile as shp
 import seaborn as sns
 
 def plot():
+
+    ##this is the previous coordinate method
     print("hello world")
 
     df = pd.DataFrame(
@@ -31,8 +33,6 @@ def plot():
 # We can now plot our ``GeoDataFrame``.
 
 
-
-
 #path1 = 'home/kunalmahajan/cmsc12200-win-20-kunalmahajan/states_21basic/states.shp'
     path1 = "states_21basic/states.shp"
     usa = geopandas.read_file(path1)
@@ -42,6 +42,10 @@ def plot():
 
 
 def get_coor(string_city):
+    '''
+
+    Attempt to use geocode tool to return coordinate
+    '''
 	print("string_city: " + string_city)
 	return geopandas.tools.geocode(starting_city)
 
@@ -53,5 +57,61 @@ def test_plot(i):
     print(sf.records()[i])
 
 def get_reader(path):
+    '''
+    Input: path (string)
+    Output shapefile object
+    '''
 
     return shp.Reader(path)
+
+def read_shapefile(sf):
+    '''
+    Read a shapefile object a Pandas dataframe with a 'coords' 
+    column holding the geometry information. This uses the pyshp
+    package
+    '''
+    fields = [x[0] for x in sf.fields][1:]
+    field_attributes = sf.fields
+    records = sf.records()
+    shapes_objs = sf.shapes()
+
+    shps = [s.points for s in sf.shapes()]f
+    df = pd.DataFrame(columns=fields, data=records)
+    df = df.assign(coords=shps)
+    1 + 1
+    return df
+
+def file_editor():
+    '''
+    Initializes new shapefile
+
+    '''
+
+    w = shapefile.Writer('./testfile')
+
+def record_editor():
+    '''
+    Updates dbf file in shapefile folder
+    '''
+
+    db = dbf.Dbf("your_file.dbf")
+
+    #Editing a value, assuming you want to edit the first field of the first record
+    
+    for rec in db:
+        rec["Count"] = sf.records()
+
+
+    rec.store()
+    del rec
+    db.close()  
+
+def image_make(bins):
+    '''
+    Inputs: bins(list of matplotlib objects)
+    Outputs: multiple png files
+            ##directory not yet made for this
+
+    '''
+    for bin1 in bins:
+        plt.savefig(bin1)
