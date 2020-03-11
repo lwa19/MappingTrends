@@ -10,6 +10,8 @@ from operator import and_
 from django.shortcuts import render
 from django import forms
 
+from django.http import HttpResponse
+
 # from tweet_gather import go
 
 # RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
@@ -185,6 +187,8 @@ class SearchForm(forms.Form):
 
 def home(request):
     context = {}
+    display_text_box = 'Welcome to Mapping Twitter Trends. This website will...testing this.'
+    print(HttpResponse(display_text_box))
     res = None
     if request.method == 'GET':
         # create a form instance and populate it with data from the request:
