@@ -46,9 +46,9 @@ def collect_data(search_term, mode, interval, endpoint):
     tweet_data = []
 
     if mode == "past":
-        # Collect tweets from the past in ascending time
+        # Collect tweets from the past by popularity
         all_tweets = search_words(search_term)
-        all_tweets.reverse()
+        # all_tweets.reverse()
     if mode == "live":
         # stream tweets live (ascending time)
         all_tweets = stream_tweets(search_term)
@@ -93,7 +93,7 @@ def time_bins(mode, interval, endpoint):
         end = start + interval
         bins.append((start, end))
         start = end
-    
+
     return bins
 
 
@@ -115,6 +115,8 @@ def sort_tweets(batch, bins, search_term):
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
+    tweets_by_interval = [ [] for i in enumerate(bins) ]
+
     for tweet in batch:
         time = tweet['created_at']
         time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
@@ -122,16 +124,17 @@ def sort_tweets(batch, bins, search_term):
         for ind_bin, timebin in enumerate(bins):
             start, end = timebin
             if start <= time <= end:
-                file_name = search_term + '_' + str(ind_bin)
+                file_name = "{}_{}.json".format(search_term, str(ind_bin))
                 with open(os.path.join(outdir, file_name), 'a') as outfile:
                     json.dump(tweet, outfile, indent=4)
-                    outfile.write('\n')  
+                    outfile.write('\n')
+                tweets_by_interval[ind_bin].append(tweet)
                 break
 
-    return None
+    return tweets_by_interval
 
 
-def search_words(input_query, limit=100):
+def search_words(input_query, limit=100, search_type="mixed"):
     '''
     Performs a generic query according to query input with no filtering.
 
@@ -146,8 +149,8 @@ def search_words(input_query, limit=100):
     # gathering a collection of tweets. Output: tweepy.cursor.ItemIterator
     tweets = tw.Cursor(api.search,
                        input_query,
+                       result_type=search_type,
                        lang="en",
-                       result_type="popular",
                        include_entities=False
                        ).items(limit)
 
@@ -171,7 +174,7 @@ def search_words(input_query, limit=100):
 
 
 class MyStreamListener(tw.StreamListener):
-    
+
     def on_data(self, data):
         try:
             with open('tweets.json', 'a') as f:
@@ -182,7 +185,7 @@ class MyStreamListener(tw.StreamListener):
             print("Error on_data: %s" % str(e))
             return True
 
-    def on_error(self, status_code): 
+    def on_error(self, status_code):
         if status_code == 420:
             # to check if rate limit occurs
             return False
