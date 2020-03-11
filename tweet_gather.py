@@ -42,9 +42,8 @@ def collect_data(search_term, mode, interval, endpoint):
     '''
     #utc = pytz.UTC
     bins = time_bins(mode, interval, endpoint)
-    # load mapping dict
-    # load abbr dict
-    # tweet_data = []
+    mapping_dict, abbr_dict = read_location_info()
+    tweet_data = []
 
     if mode == "past":
         # Collect tweets from the past in ascending time
@@ -68,7 +67,8 @@ def collect_data(search_term, mode, interval, endpoint):
                 if start <= time <= end:
                     file_name = search_term + '_' + str(ind_bin)
                     with open(os.path.join(outdir, file_name), 'a') as outfile:
-                        json.dump(tweet, outfile, indent=4)  
+                        json.dump(tweet, outfile, indent=4)
+                        outfile.write('\n')  
                     break
 
         '''
@@ -113,9 +113,26 @@ def collect_data(search_term, mode, interval, endpoint):
 
     #data_array = pd.DataFrame(tweet_data)
     #data_array = data_array.transpose()
+        all_tweets = search_words(search_term)
+        all_tweets.reverse()
+    if mode == "live":
+        # stream tweets live (ascending time)
+        all_tweets = stream_tweets(search_term)
+
+    # sort tweets into time intervals
+    tweet_batches = sort_tweets(all_tweets, bins, search_term)
+
+    # for each time interval, determine the number of tweets per state
+    for batch in tweet_batches:
+        state_counts = convert_location(batch, mapping_dict, abbr_dict)
+        tweet_data.append(state_counts)
+
+    # format as a dataframe
+    data_array = pd.DataFrame(tweet_data)
+    data_array = data_array.transpose()
     # name the bins
 
-    return bins
+    return data_array
 
 
 def time_bins(mode, interval, endpoint):
@@ -146,7 +163,62 @@ def time_bins(mode, interval, endpoint):
     return bins
 
 
-def search_words(input_query, lang="en", limit=100, entities=False):
+def sort_tweets(batch, bins, search_term):
+    '''
+    Sorts a batch of tweets into given time interval bins.
+
+    Inputs:
+        tweets: a list of tweet-dictionaries
+        bins: a list of start-end 2-tuples containing datetime objects
+
+    Outputs:
+        a folder of JSON files for tweets from each time interval.
+    '''
+    # Create a new directory and put the divided json files into it
+    dt = datetime.now(timezone.utc)
+    formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
+    outdir = "{}_{}.json".format(search_term, formatted_dt)
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+
+    for ind_bin, timebin in enumerate(bins):
+        print('bin#:', ind_bin)
+        coll = []
+        start, end = timebin
+
+        for ind, tweet in enumerate(batch):
+            time = tweet['created_at']
+            time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
+            print('time = ', time)
+            
+            if start <= time <= end:
+                print('added!')
+                coll.append(tweet)
+                continue
+            elif time > end:
+                print('time > end!')
+                # write the completed bin to json file
+                file_name = search_term + '_' + str(ind_bin)
+                with open(os.path.join(outdir, file_name), 'a') as outfile:
+                    json.dump(coll, outfile, indent=4)  
+                
+                # Get rid of used tweets:
+                batch = batch[ind + 1:]
+                break  # breaks inner for loop, go to the next bin
+            else:
+                break
+        print('next bin!')  
+        continue
+    
+    print('write the last file')
+    file_name = search_term + '_' + str(ind_bin)
+    with open(os.path.join(outdir, file_name), 'a') as outfile:
+        json.dump(coll, outfile, indent=4) 
+
+    return None
+
+
+def search_words(input_query, limit=100):
     '''
     Performs a generic query according to query input with no filtering.
 
@@ -160,8 +232,9 @@ def search_words(input_query, lang="en", limit=100, entities=False):
     collection = []
     # gathering a collection of tweets. Output: tweepy.cursor.ItemIterator
     tweets = tw.Cursor(api.search,
-                       q=input_query,
-                       lang='en'
+                       input_query,
+                       lang="en",
+                       include_entities=False
                        ).items(limit)
 
     # convert each tweet into a json object and add to collection (list)
@@ -181,6 +254,7 @@ def search_words(input_query, lang="en", limit=100, entities=False):
         json.dump(collection, outfile, indent=4)
 
     return collection
+
 
 class MyStreamListener(tw.StreamListener):
     
@@ -236,30 +310,23 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
 
     for tweet in tweet_data:
         # check if geotag exists
-        # if tweet["place"]:
-        #     # only considers tweets from US
-        #     if tweet["place"]["country"] == "United States":
-        #         coordinates = tweet["place"]["bounding_box"]["coordinates"]
-        #         state = geotag_state(coordinates)
-        #         if state:
-        #             location_counts[state] += 1
-        # need to check sth with geotag info consistency first
+        if tweet["place"]:
+            # only considers tweets from US
+            if tweet["place"]["country"] == "United States":
+                place = tweet["place"]["full_name"]
+                # almost all geotagged locations in the US are of the form "city, ST"
+                for abbr, state in abbr_dict.items():
+                    if abbr in string:
+                        location_counts[state] += 1
 
         # checks if home location field is filled
-        # elif tweet["user"]["location"]:
-        if tweet["user"]["location"]:
+        elif tweet["user"]["location"]:
             home_location = tweet["user"]["location"]
             state = parse_home_location(home_location, mapping_dict, abbr_dict)
             if state:
                 location_counts[state] += 1
 
     return location_counts
-
-
-def geotag_state(coordinates):
-    '''
-    Determines the US state a set of coordinates corresponds to.
-    '''
 
 
 def parse_home_location(string, mapping_dict, abbr_dict):
@@ -293,12 +360,52 @@ def parse_home_location(string, mapping_dict, abbr_dict):
         if abbr in string:
             return state
 
+    # Temporary. Possibly using a library to make this more efficient
     for state, cities in mapping_dict.items():
         for city in cities:
             if city in string:
                 return state
 
     return None
+
+# Will eventually be superseded by loading csv files with the results of this
+# that we want instead of running this function every time
+def read_location_info(database="uscities.csv"):
+    '''
+    Reads in location data for US cities and returns dictionaries that map
+    cities and state abbreviations to states, as well as a dictionary with the
+    coordinates for the largest city by population in the state.
+
+    Inputs: database (database from https://simplemaps.com/data/us-cities)
+    Outputs:
+        mapping_dict: {state1: {city1, city2 ...}, ...}
+        abbr_dict: {id1: state1, ...}
+        state_coords = {state1: (city, pop, lat, lon), ...}
+    '''
+    location_data = pd.read_csv(database)
+    mapping_dict = {}
+    abbr_dict = {}
+    # state_coords = {}
+
+    for index, row in location_data.iterrows():
+        state = row["state_name"]
+        city = row["city"]
+        abbr = row["state_id"]
+        # pop = row["population"]
+        # lat = row["lat"]
+        # lng = row["lng"]
+
+        if state not in mapping_dict.keys():
+            mapping_dict[state] = set()
+            abbr_dict[abbr] = state
+            # state_coords[state] = (None, 0, None, None)
+
+        mapping_dict[state].add(city)
+
+        # if pop > state_coords[state][1]:
+        #     state_coords[state] = (city, pop, lat, lng)
+
+    return mapping_dict, abbr_dict
 
 # ARCHIVED FUNCTIONS
 
@@ -392,44 +499,11 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
 
     return collection, geotagged, user_loc
 
-
-def read_location_info(database="uscities.csv"):
+def geotag_state(coordinates):
     '''
-    Reads in location data for US cities and returns dictionaries that map
-    cities and state abbreviations to states, as well as a dictionary with the
-    coordinates for the largest city by population in the state.
-
-    Inputs: database (database from https://simplemaps.com/data/us-cities)
-    Outputs:
-        mapping_dict: {state1: {city1, city2 ...}, ...}
-        abbr_dict: {id1: state1, ...}
-        state_coords = {state1: (city, pop, lat, lon), ...}
+    Determines the US state a set of coordinates corresponds to.
     '''
-    location_data = pd.read_csv(database)
-    mapping_dict = {}
-    abbr_dict = {}
-    state_coords = {}
-
-    for index, row in location_data.iterrows():
-        state = row["state_name"]
-        city = row["city"]
-        abbr = row["state_id"]
-        pop = row["population"]
-        lat = row["lat"]
-        lng = row["lng"]
-
-        if state not in mapping_dict.keys():
-            mapping_dict[state] = set()
-            abbr_dict[abbr] = state
-            state_coords[state] = (None, 0, None, None)
-
-        mapping_dict[state].add(city)
-
-        if pop > state_coords[state][1]:
-            state_coords[state] = (city, pop, lat, lng)
-
-    return mapping_dict, abbr_dict, state_coords
-
+    return None
 
 # NOTES
 
