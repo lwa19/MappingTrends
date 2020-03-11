@@ -1,6 +1,6 @@
 ### STREAMING LIVE DATA ###
-### to use this section make sure to set which file to extract keys (keys_file), search term (input_hashtag)
-###  and number of tweets (n_tweets) and then run just_stream
+### to use this section make sure to set which file to extract keys from (keys_file), search term (input_hashtag),
+###  number of tweets (n_tweets) and the filename to store tweets in (tweets_file). Then run just_stream.
 
 import tweepy
 import json
@@ -16,7 +16,11 @@ auth = tweepy.OAuthHandler(keys['CONSUMER_KEY'], keys['CONSUMER_SECRET'])
 auth.set_access_token(keys['ACCESS_TOKEN'], keys['ACCESS_SECRET'])
 api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
-
+### Inputs: 
+tweet_count = 0
+n_tweets = 5
+input_hashtag = 'bernie sanders'
+tweets_file = '%s_streamed_tweets.json' % input_hashtag
 ### stream listener class ### 
 class MyStreamListener(tweepy.StreamListener):
     
@@ -24,9 +28,10 @@ class MyStreamListener(tweepy.StreamListener):
         global tweet_count
         global n_tweets
         global stream
+        global tweets_file
         if tweet_count < n_tweets:
             try:
-                with open('tweets.json', 'a') as f:
+                with open(tweets_file, 'a') as f:
                     f.write(data)
                     print(data)
                     tweet_count += 1
@@ -43,11 +48,8 @@ class MyStreamListener(tweepy.StreamListener):
             return False
         print(status_code.text)
 
-#inputs for this function would be the input hashtag as well as how many tweets we want:
-tweet_count = 0
-n_tweets = 10
-input_hashtag = 'bernie'
 
+### run the stream 
 listener = MyStreamListener()
 
 stream = tweepy.Stream(auth, listener)
