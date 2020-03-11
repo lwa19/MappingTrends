@@ -83,7 +83,8 @@ def collect_data(search_term, mode, interval, endpoint):
                     # Get rid of used tweets:
                     batch = batch[ind + 1:]
                     break  # breaks inner for loop, go to the next bin
-
+                else:
+                    break
             print('next bin!')  
             continue
         
