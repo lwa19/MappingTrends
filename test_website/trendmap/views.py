@@ -12,7 +12,8 @@ from django import forms
 
 from django.http import HttpResponse
 
-# from tweet_gather import go
+from tweet_gather import collect_data
+# tweet_gather.py must be inside the website folder
 
 # RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
 
@@ -123,12 +124,46 @@ from django.http import HttpResponse
 #                     'Walking time must be a non-negative integer.')
 #         return data_list
 
+# enrollment = EnrollmentRange(
+#     label='Enrollment (lower/upper)',
+#     help_text='e.g. 1 and 40',
+#     widget=RANGE_WIDGET,
+#     required=False)
+# time = TimeRange(
+#     label='Time (start/end)',
+#     help_text='e.g. 1000 and 1430 (meaning 10am-2:30pm)',
+#     widget=RANGE_WIDGET,
+#     required=False)
+# time_and_building = BuildingWalkingTime(
+#     label='Walking time:',
+#     help_text='e.g. 10 and RY (at most a 10-min walk from Ryerson)',
+#     required=False,
+#     widget=forms.widgets.MultiWidget(
+#         widgets=(forms.widgets.NumberInput,
+#                  forms.widgets.Select(choices=BUILDINGS))))
+# dept = forms.ChoiceField(label='Department', choices=DEPTS, required=False)
+# days = forms.MultipleChoiceField(label='Days',
+#                                  choices=DAYS,
+#                                  widget=forms.CheckboxSelectMultiple,
+#                                  required=False)
+# show_args = forms.BooleanField(label='Show args_to_ui',
+#                                required=False)
+
 class BinSize(forms.MultiValueField):
     def __init__(self, *args, **kwargs):
         fields = (forms.IntegerField(required=True),
                   forms.ChoiceField(label='Units', choices=UNITS,
                                     required=True))
         super(BinSize, self).__init__(
+            fields=fields,
+            *args, **kwargs)
+
+class EndPoint(forms.MultiValueField):
+    def __init__(self, *args, **kwargs):
+        fields = (forms.IntegerField(required=True),
+                  forms.ChoiceField(label='Units', choices=UNITS,
+                                    required=True))
+        super(EndPoint, self).__init__(
             fields=fields,
             *args, **kwargs)
 
@@ -152,37 +187,16 @@ class SearchForm(forms.Form):
         widget=forms.widgets.MultiWidget(
             widgets=(forms.widgets.NumberInput,
                      forms.widgets.Select(choices=UNITS))))
-    # timespan = 
+    endpoint = EndPoint(
+        label='End Point',
+        help_text='How far back/forward in time should we track tweets?',
+        widget=forms.widgets.MultiWidget(
+            widgets=(forms.widgets.NumberInput,
+                     forms.widgets.Select(choices=UNITS))))
+
 
     # Set error msg -> 0 days, 7 days
     # Deal with incompatible times
-
-
-
-    # enrollment = EnrollmentRange(
-    #     label='Enrollment (lower/upper)',
-    #     help_text='e.g. 1 and 40',
-    #     widget=RANGE_WIDGET,
-    #     required=False)
-    # time = TimeRange(
-    #     label='Time (start/end)',
-    #     help_text='e.g. 1000 and 1430 (meaning 10am-2:30pm)',
-    #     widget=RANGE_WIDGET,
-    #     required=False)
-    # time_and_building = BuildingWalkingTime(
-    #     label='Walking time:',
-    #     help_text='e.g. 10 and RY (at most a 10-min walk from Ryerson)',
-    #     required=False,
-    #     widget=forms.widgets.MultiWidget(
-    #         widgets=(forms.widgets.NumberInput,
-    #                  forms.widgets.Select(choices=BUILDINGS))))
-    # dept = forms.ChoiceField(label='Department', choices=DEPTS, required=False)
-    # days = forms.MultipleChoiceField(label='Days',
-    #                                  choices=DAYS,
-    #                                  widget=forms.CheckboxSelectMultiple,
-    #                                  required=False)
-    # show_args = forms.BooleanField(label='Show args_to_ui',
-    #                                required=False)
 
 
 def home(request):
@@ -194,75 +208,75 @@ def home(request):
         # create a form instance and populate it with data from the request:
         form = SearchForm(request.GET)
         # check whether it's valid:
-        # if form.is_valid():
+        if form.is_valid():
 
             # Convert form data to an args dictionary for find_courses
-            # args = {}
-            # args['query'] = form.cleaned_data['query']
-            # args['mode'] - form.cleaned_data['mode']
-            # if form.cleaned_data['query']:
-            #     args['terms'] = form.cleaned_data['query']
-            # enroll = form.cleaned_data['enrollment']
-            # if enroll:
-            #     args['enroll_lower'] = enroll[0]
-            #     args['enroll_upper'] = enroll[1]
-            # time = form.cleaned_data['time']
-            # if time:
-            #     args['time_start'] = time[0]
-            #     args['time_end'] = time[1]
+            args = {}
+            args['query'] = form.cleaned_data['query']
+            args['mode'] - form.cleaned_data['mode']
+            if form.cleaned_data['query']:
+                args['terms'] = form.cleaned_data['query']
+            enroll = form.cleaned_data['enrollment']
+            if enroll:
+                args['enroll_lower'] = enroll[0]
+                args['enroll_upper'] = enroll[1]
+            time = form.cleaned_data['time']
+            if time:
+                args['time_start'] = time[0]
+                args['time_end'] = time[1]
 
-            # days = form.cleaned_data['days']
-            # if days:
-            #     args['day'] = days
-            # dept = form.cleaned_data['dept']
-            # if dept:
-            #     args['dept'] = dept
+            days = form.cleaned_data['days']
+            if days:
+                args['day'] = days
+            dept = form.cleaned_data['dept']
+            if dept:
+                args['dept'] = dept
 
-            # time_and_building = form.cleaned_data['time_and_building']
-            # if time_and_building:
-            #     args['walking_time'] = time_and_building[0]
-            #     args['building'] = time_and_building[1]
+            time_and_building = form.cleaned_data['time_and_building']
+            if time_and_building:
+                args['walking_time'] = time_and_building[0]
+                args['building'] = time_and_building[1]
 
-            # if form.cleaned_data['show_args']:
-            #     context['args'] = 'args_to_ui = ' + json.dumps(args, indent=2)
+            if form.cleaned_data['show_args']:
+                context['args'] = 'args_to_ui = ' + json.dumps(args, indent=2)
 
-#             try:
-#                 res = go(args)
-#             except Exception as e:
-#                 print('Exception caught')
-#                 bt = traceback.format_exception(*sys.exc_info()[:3])
-#                 context['err'] = """
-#                 An exception was thrown in find_courses:
-#                 <pre>{}
-# {}</pre>
-#                 """.format(e, '\n'.join(bt))
+            try:
+                res = go(args)
+            except Exception as e:
+                print('Exception caught')
+                bt = traceback.format_exception(*sys.exc_info()[:3])
+                context['err'] = """
+                An exception was thrown in find_courses:
+                <pre>{}
+{}</pre>
+                """.format(e, '\n'.join(bt))
 
-#                 res = None
+                res = None
     else:
         form = SearchForm()
 
-#     # Handle different responses of res
-#     if res is None:
-#         context['result'] = None
-#     elif isinstance(res, str):
-#         context['result'] = None
-#         context['err'] = res
-#         result = None
-#     elif not _valid_result(res):
-#         context['result'] = None
-#         context['err'] = ('Return of find_courses has the wrong data type. '
-#                           'Should be a tuple of length 4 with one string and '
-#                           'three lists.')
-#     else:
-#         columns, result = res
+    # Handle different responses of res
+    if res is None:
+        context['result'] = None
+    elif isinstance(res, str):
+        context['result'] = None
+        context['err'] = res
+        result = None
+    elif not _valid_result(res):
+        context['result'] = None
+        context['err'] = ('Return of find_courses has the wrong data type. '
+                          'Should be a tuple of length 4 with one string and '
+                          'three lists.')
+    else:
+        columns, result = res
 
-#         # Wrap in tuple if result is not already
-#         if result and isinstance(result[0], str):
-#             result = [(r,) for r in result]
+        # Wrap in tuple if result is not already
+        if result and isinstance(result[0], str):
+            result = [(r,) for r in result]
 
-#         context['result'] = result
-#         context['num_results'] = len(result)
-#         context['columns'] = [COLUMN_NAMES.get(col, col) for col in columns]
+        context['result'] = result
+        context['num_results'] = len(result)
+        context['columns'] = [COLUMN_NAMES.get(col, col) for col in columns]
 
     context['form'] = form
     return render(request, 'index.html', context)
