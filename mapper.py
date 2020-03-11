@@ -52,7 +52,7 @@ class Shapefile:
 
     def add_data(self, dict_data = [test_dict], col_name = ["column"]):
         self.cols = col_name
-        return join_dict_data(dict_data, self.gdf, col_name)
+        #return join_dict_data(dict_data, self.gdf, col_name)
         self.gdf = join_dict_data(dict_data, self.gdf, col_name)
 
 
@@ -140,6 +140,7 @@ def get_color_bins(geoframe, col = 'count'):
             list_none.append(row[1]['STATE_ABBR'])
 
     assert len(list_key) == len(list_val)
+    print(list_val)
     list_val = pd.qcut(list_val, q = 4, labels = [1,2,3,4])
 
     print(list_key)
@@ -159,7 +160,8 @@ def get_color_bins(geoframe, col = 'count'):
 def join_dict_data(state_dicts, geoframe, cols = ['count']):
 
     #assert type(state_dict) == dict or (type(state_dict)== list and type(state_dict[0])==dict)
-    list_of_lists = [[]] * len(cols)
+    #list_of_lists = [[]] * len(cols)
+    list_of_lists = [[] for _ in range(len(cols))]
     other_count = 0
     for i, state_dict in enumerate(state_dicts):
         counter = 0
@@ -175,12 +177,13 @@ def join_dict_data(state_dicts, geoframe, cols = ['count']):
                 #print("added none")
                 list_of_lists[i].append(None)
                 counter = counter + 1
-        print("counter: " + str(counter))
+        # print("counter: " + str(counter) + " , i: " + str(i))
+        # print(list_of_lists[i])
         other_count += 1
-    print("other: " + str(other_count))
-
-    print(list_of_lists)
-    return list_of_lists
+    # print("other: " + str(other_count))
+    # print(len(list_of_lists[0]))
+    # print(list_of_lists)
+    # return list_of_lists
     for i, col in enumerate(cols):
         print(i, col)
         #print(len(geoframe[col]))
