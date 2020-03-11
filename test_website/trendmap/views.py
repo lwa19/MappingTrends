@@ -102,14 +102,14 @@ from django import forms
 #                                                   forms.widgets.NumberInput))
 
 
-class BuildingWalkingTime(forms.MultiValueField):
-    def __init__(self, *args, **kwargs):
-        fields = (forms.IntegerField(),
-                  forms.ChoiceField(label='Building', choices=BUILDINGS,
-                                    required=False),)
-        super(BuildingWalkingTime, self).__init__(
-            fields=fields,
-            *args, **kwargs)
+# class BuildingWalkingTime(forms.MultiValueField):
+#     def __init__(self, *args, **kwargs):
+#         fields = (forms.IntegerField(),
+#                   forms.ChoiceField(label='Building', choices=BUILDINGS,
+#                                     required=False),)
+#         super(BuildingWalkingTime, self).__init__(
+#             fields=fields,
+#             *args, **kwargs)
 
 #     def compress(self, data_list):
 #         if len(data_list) == 2:
