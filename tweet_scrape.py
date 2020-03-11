@@ -44,10 +44,10 @@ def search_words(input_query, limit=1000):
 
     return collection
 
-def geo_tweets(input_query, min_count=100, min_geo=0):
+def geo_tweets(input_query, min_count=1000, min_geo=0):
     '''
     Filter for tweets with either geotag or profile location. Collected 
-    tweets only have relevant information (tweet.created_at,tweet.id_str,
+    tweets only have relevant information (twteet.created_at,tweet.id_str,
     tweet.text, tweet.user, tweet.coordinates, tweet.place). Datetime is 
     converted to string for json storage.
 
@@ -63,10 +63,8 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
     geotagged = []
     user_loc = []
 
-    tweets = tw.Cursor(api.search, 
-                       q=input_query,
-                       lang='en'
-                       ).items(1000)   
+    tweets = tw.Cursor(api.search, q=input_query, lang='en' \
+                       ).items(min_count)
     
     # convert each tweet into a json object and add to collection (list)
     for entry in tweets:
@@ -82,7 +80,7 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
             collection.append(item)
             geotagged.append(item)
         
-        elif item[3].location:
+        elif item[3]['location']:
             collection.append(item)
             user_loc.append(item)
         
@@ -95,7 +93,7 @@ def geo_tweets(input_query, min_count=100, min_geo=0):
     
     for ind, lst in enumerate(tup):
         file_name = input_query + '_' + cats[ind] + '.json'
-        json_str = json.dumps(lst, default=str)
+        json_str = json.dumps(lst)
         with open(file_name, 'w') as outfile:
             json.dump(json_str, outfile)
 
