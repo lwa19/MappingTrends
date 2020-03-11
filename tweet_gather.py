@@ -49,39 +49,49 @@ def collect_data(search_term, mode, interval, endpoint):
     if mode == "past":
         # Collect tweets from the past in ascending time
         batch = search_words(search_term)
+        print('len_batch=', len(batch))
         batch.reverse()     
 
         # Create a new directory and put the divided json files into it
         dt = datetime.now(timezone.utc)
         formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
-        outdir = "tweets_{}_{}.json".format(search_term, formatted_dt)
+        outdir = "{}_{}.json".format(search_term, formatted_dt)
         if not os.path.exists(outdir):
             os.mkdir(outdir)
 
-        # Filter through the tweets in the batch to separate time intervals
-        ind_bin = 0
-
-        while ind_bin < len(bins):
+        for ind_bin, timebin in enumerate(bins):
+            print('bin#:', ind_bin)
             coll = []
-            start, end = bins[ind_bin]
+            start, end = timebin
 
-            for tweet in batch:
+            for ind, tweet in enumerate(batch):
                 time = tweet['created_at']
                 time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
+                print('time = ', time)
                 
                 if start <= time <= end:
+                    print('added!')
                     coll.append(tweet)
                     continue
                 elif time > end:
+                    print('time > end!')
                     # write the completed bin to json file
                     file_name = search_term + '_' + str(ind_bin)
                     with open(os.path.join(outdir, file_name), 'a') as outfile:
-                        json.dump(coll, outfile, indent=4)    
+                        json.dump(coll, outfile, indent=4)  
                     
-                    # go to the next bin:
-                    ind_bin += 1 
-                    break
-      
+                    # Get rid of used tweets:
+                    batch = batch[ind + 1:]
+                    break  # breaks inner for loop, go to the next bin
+
+            print('next bin!')  
+            continue
+        
+        print('write the last file')
+        file_name = search_term + '_' + str(ind_bin)
+        with open(os.path.join(outdir, file_name), 'a') as outfile:
+            json.dump(coll, outfile, indent=4)  
+
         #elif mode == "live":
             # call stream start and stop functions
         #state_counts = convert_location(batch, mapping_dict, abbr_dict)
