@@ -59,6 +59,19 @@ def collect_data(search_term, mode, interval, endpoint):
         if not os.path.exists(outdir):
             os.mkdir(outdir)
 
+        for tweet in batch:
+            time = tweet['created_at']
+            time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
+
+            for ind_bin, timebin in enumerate(bins):
+                start, end = timebin
+                if start <= time <= end:
+                    file_name = search_term + '_' + str(ind_bin)
+                    with open(os.path.join(outdir, file_name), 'a') as outfile:
+                        json.dump(tweet, outfile, indent=4)  
+                    break
+
+        '''
         for ind_bin, timebin in enumerate(bins):
             print('bin#:', ind_bin)
             coll = []
@@ -92,7 +105,7 @@ def collect_data(search_term, mode, interval, endpoint):
         file_name = search_term + '_' + str(ind_bin)
         with open(os.path.join(outdir, file_name), 'a') as outfile:
             json.dump(coll, outfile, indent=4)  
-
+        '''
         #elif mode == "live":
             # call stream start and stop functions
         #state_counts = convert_location(batch, mapping_dict, abbr_dict)
