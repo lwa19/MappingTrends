@@ -46,7 +46,7 @@ class MyStreamListener(tweepy.StreamListener):
         if status_code == 420:
             # to check if rate limit occurs
             return False
-        print(status_code.text)
+        print(status_code)
 
 
 ### run the stream 

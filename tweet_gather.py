@@ -34,7 +34,7 @@ def collect_data(search_term, mode, interval, duration):
     
     Inputs:
         search_term (str): input from the user
-        mode (str): '"past" (search historical tweets) or "live" (stream tweets)
+        mode (str): "past" (search historical tweets) or "live" (stream tweets)
         interval (int): size of time bins (minutes)
         duration (int): total length of time to collect data from (minutes)
 
@@ -65,12 +65,7 @@ def collect_data(search_term, mode, interval, duration):
         state_counts = convert_location(batch, mapping_dict, abbr_dict)
         tweet_data.append(state_counts)
 
-    # format as a dataframe
-    data_array = pd.DataFrame(tweet_data)
-    data_array = data_array.transpose()
-    # name the bins
-
-    return data_array
+    return tweet_data
 
 
 def time_bins(mode, now, interval, duration):
