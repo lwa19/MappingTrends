@@ -163,7 +163,7 @@ def build_plot(shapefile_object, file_name, col = 'count', show_plot = True):
 
     return fig
 
-def get_color_bins(geoframe, col = 'count'):
+def get_color_bins(geoframe, col = 'count', unified_scale = True):
     temp_map  = {}
     temp_list = []
     list_key = []
