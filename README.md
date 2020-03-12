@@ -92,4 +92,19 @@ MappingTrends
 
 ## Challenges
 
+1. Access Tokens took a significantly long time to work. Despite the fact that we received an email about the approval of our Developer rights, we were unable to get authentication using the access tokens. This issue took several days to resolve.
+
+2. The standard search in Twitter has a rate limit on scraping the past data. We were able to overcome the issue by adding the wait_on_rate_limit functionality. 
+
+3. Functionality to filter for tweets with geo-information was attempted. However, duplicates were incurred and there was no easy way of resolving the issue, so this attempt was ditched and replaced. 
+
+4. Disconnecting the stream for the streaming function was difficult to do because the API was unhelpful. Manually interrupting the stream was easy, but finding the disconnect code functionality took several frustrating hours. 
+
+5. GIS*
+
+6. Django took a while to understand conceptually, especially given that the documentation was not clear and easily understood. &&
+
+
 ## Acknowledgements
+
+We appreciate Professor Matthew Wachs' help and direction and the materials taught in the course CMSC 12100-12200. 
