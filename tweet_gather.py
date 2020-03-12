@@ -16,8 +16,6 @@ import os
 import tweepy as tw
 import pandas as pd
 import json
-import pytz
-import ast
 
 # obtain consumer and access keys from json
 with open('twitter_credentials.json', 'r') as f:
@@ -46,7 +44,6 @@ def collect_data(search_term, mode, interval, duration):
 
     Datetime offset-naive and offset-aware solved by link:
     '''
-    #utc = pytz.UTC
     now = datetime.now(timezone.utc)
     bins = time_bins(mode, now, interval, duration)
     
@@ -279,8 +276,8 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
     '''
     # initialise counts dictionary
     location_counts = {}
-    for state in mapping_dict.keys():
-        location_counts[state] = 0
+    for abbr in mapping_dict.keys():
+        location_counts[abbr] = 0
 
     # if replacing the direct input with a file
     # with open(tweet_data) as input_file:
@@ -293,9 +290,9 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
             if tweet["place"]["country"] == "United States":
                 place = tweet["place"]["full_name"]
                 # almost all geotagged locations in the US are of the form "city, ST"
-                for abbr, state in abbr_dict.items():
+                for abbr in mapping_dict.keys():
                     if abbr in place:
-                        location_counts[state] += 1
+                        location_counts[abbr] += 1
 
         # checks if home location field is filled
         elif tweet["user"]["location"]:
@@ -314,11 +311,11 @@ def parse_home_location(string, mapping_dict, abbr_dict):
 
     Inputs:
         string: the user's home location
-        mapping_dict: {state_name: [list of cities], ...}
-        abbr_dict: {state_abbr: state_name, ...}
+        mapping_dict: {state_abbr: [list of cities], ...}
+        abbr_dict: {state_name: state_abbr, ...}
 
     Output:
-        state(str): the state the user's home location is associated with
+        abbr(str): the state id the user's home location is associated with
 
     Problem cases (treated as program limitations):
         1) a city which contains a word for a state will be treated
@@ -328,21 +325,21 @@ def parse_home_location(string, mapping_dict, abbr_dict):
         3) if a city name contains the name of another city in it, it may
            recognize the substring first and return the state of that city
     '''
-    for state in mapping_dict.keys():
-        if state in string:
-            return state
-
     # Case-sensitive and thus wil avoid picking up fragments in other words
     # eg. only recognises "IL" not "illness"
-    for abbr, state in abbr_dict.items():
+    for abbr in mapping_dict.keys():
         if abbr in string:
-            return state
+            return abbr
+
+    for state, abbr in abbr_dict.items():
+        if state in string:
+            return abbr
 
     # Temporary. Possibly using a library to make this more efficient
-    for state, cities in mapping_dict.items():
+    for abbr, cities in mapping_dict.items():
         for city in cities:
             if city in string:
-                return state
+                return abbr
 
     return None
 
@@ -373,12 +370,12 @@ def read_location_info(database="uscities.csv"):
         # lat = row["lat"]
         # lng = row["lng"]
 
-        if state not in mapping_dict.keys():
-            mapping_dict[state] = set()
-            abbr_dict[abbr] = state
+        if abbr not in mapping_dict.keys():
+            mapping_dict[abbr] = set()
+            abbr_dict[state] = abbr
             # state_coords[state] = (None, 0, None, None)
 
-        mapping_dict[state].add(city)
+        mapping_dict[abbr].add(city)
 
         # if pop > state_coords[state][1]:
         #     state_coords[state] = (city, pop, lat, lng)
