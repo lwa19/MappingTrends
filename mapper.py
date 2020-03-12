@@ -7,6 +7,8 @@ import numpy as np
 import shapefile as shp
 
 import seaborn as sns
+from descartes import PolygonPatch
+import random
 
 print("yeet")
 #plot1()
@@ -25,12 +27,12 @@ test_dict = { 'AR': 9, 'AZ': 7, 'CA': 5, 'CO': 0,
         'WI': 0, 'WV': 8, 'WY': 8}
 
 class Shapefile:
+    ##run init,then add_data, then plot_data
 
     def __init__(self, shp_path = "./states_21basic/states.shp"):
         '''
-        Read a shapefile object a Pandas dataframe with a 'coords' 
-        column holding the geometry information. This uses the pyshp
-        package
+        Read in a shapefile using its path
+        By default uses a shapefile of the 50 US States + DC
         '''
         print("a")
         self.gdf = geopandas.GeoDataFrame.from_file(shp_path)
@@ -50,54 +52,58 @@ class Shapefile:
         self.test_dict = test_dict
 
 
-    def add_data(self, dict_data = [test_dict], col_name = ["column"]):
-        self.cols = col_name
-        #return join_dict_data(dict_data, self.gdf, col_name)
-        self.gdf = join_dict_data(dict_data, self.gdf, col_name)
-
-
+    def add_data(self, dict_data = [test_dict], col_names = ["column"]):
+        '''
+        Adds data to geodataframe
+        Inputs: 
+            dict_data (list of dicts)
+            col_names (list of strings)
+        '''
+        self.cols = col_names
+        self.gdf = join_dict_data(dict_data, self.gdf, col_names)
 
 
 
     def plot_data(self, file_name = "test_file", show_plot = True):
+        plot_list = []
         for col in self.cols:
-            alt_plot(self, file_name, col, show_plot)
+            plot_list.append(build_plot(self, file_name, col, show_plot))
+
+        if len(plot_list) == 1:
+            plot_list[0].savefig('./Plot_pngs/' + file_name + '.png')
+        else:
+            print(plot_list)
+            for i, plot in enumerate(plot_list):
+                plot.savefig('./Plot_pngs/' + file_name + "("+str(i)+").png")
+
+        return plot_list
 
 
 
 
 
 
-def alt_plot(shapefile_object, file_name, col = 'count', show_plot = True):
-    # new = geopandas.read_file(shp_path+".shp")
-    # return new.plot()
-    # print("mkay")
+def build_plot(shapefile_object, file_name, col = 'count', show_plot = True):
+    '''
+    Main function to build plot in matplotlib
+    Inputs:
+        Shapefile_object (object of Shapefile class)
+        file_name (string): What you want to name the file
+        col (string): Name of the column data to plot
+        show_plot (bool): Choice on whether or not to display plot
+                          (the file(s) are still saved regardless of show_plot)
+    Outputs:
+        fig (matplotlib figure)
+        UI display of figure if show_plot = True                      
+    '''
 
-    # from geopandas import GeoDataFrame
-    # test = GeoDataFrame.from_file(shp_path)
-    
+
     test = shapefile_object.gdf
 
-    #test_dict = {'AK': 7, 'AL': 6, 'AR': 9}
-
-    ###test = join_dict_data(test_dict, test)
-
-    #print(test)
-    #test['color_bin_code'] = pd.qcut(test['count'], q =4, labels = [1,2,3,4])
-    #print(test['color_bin_code'])
     color_map = get_color_bins(test, col)
     ##return color_map
     ##??onlytest
     color_sq =['#ffffff00', '#b3cde0','#6497b1','#005b96','#03396c']
-    #rint(color_sq[test['color_bin_code'][0]])
-    #test.set_index('id', inplace=True)
-    #test.sort()
-    #test['geometry']
-    #print(test.columns())
-
-    import matplotlib.pyplot as plt 
-    from descartes import PolygonPatch
-    import random
     
     BLUE = '#6699cc'
     fig = plt.figure() 
@@ -118,10 +124,7 @@ def alt_plot(shapefile_object, file_name, col = 'count', show_plot = True):
     else:
         plt.close() #prevents pop ups next time
 
-    #folder "Plot_pngs" needs to exist for this to work
-    fig.savefig('./Plot_pngs/' + file_name + '.png')
-    #mk.savefig('./Plot_pngs/test.png')
-    return test
+    return fig
 
 def get_color_bins(geoframe, col = 'count'):
     temp_map  = {}
@@ -155,7 +158,6 @@ def get_color_bins(geoframe, col = 'count'):
     return temp_map
 
     
-
 
 def join_dict_data(state_dicts, geoframe, cols = ['count']):
 
@@ -191,30 +193,8 @@ def join_dict_data(state_dicts, geoframe, cols = ['count']):
         print(list_of_lists)
         geoframe[col] = list_of_lists[i]
 
-    #print("*****************")
-    #print(geoframe['count'])
-    #print(geoframe['count'])
     return geoframe
 
-# def join_dict_data(state_dict, geoframe, col = 'count'):
-
-#     #assert type(state_dict) == dict or (type(state_dict)== list and type(state_dict[0])==dict)
-#     lst1 = []
-#     for row in geoframe.iterrows(): ##??cchange iterrows so no index
-#         is_found = False
-#         for key, value in state_dict.items():
-#             if row[1]['STATE_ABBR'] == key:
-#                 lst1.append(value)
-#                 is_found = True
-#         if is_found == False:
-#             #print("added none")
-#             lst1.append(None)
-
-#     geoframe[col] = lst1
-#     #print("*****************")
-#     #print(geoframe['count'])
-#     #print(geoframe['count'])
-#     return geoframe
 
 
 def file_editor():
