@@ -11,11 +11,13 @@
 
 # import necessary libraries
 from datetime import datetime, timedelta, timezone
+import time
 import os
 import tweepy as tw
 import pandas as pd
 import json
 import pytz
+import ast
 
 # obtain consumer and access keys from json
 with open('twitter_credentials.json', 'r') as f:
@@ -27,36 +29,41 @@ auth.set_access_token(keys['ACCESS_TOKEN'], keys['ACCESS_SECRET'])
 api = tw.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 
 
-def collect_data(search_term, mode, interval, endpoint):
+def collect_data(search_term, mode, interval, duration):
     '''
-    "Go" function that runs the necessary helper functions in sequence in
+    Master function that runs the necessary helper functions in sequence in
     response to the inputs given by the user.
+    
+    Inputs:
+        search_term (str): input from the user
+        mode (str): '"past" (search historical tweets) or "live" (stream tweets)
+        interval (int): size of time bins (minutes)
+        duration (int): total length of time to collect data from (minutes)
 
-    search_term (str): input from the user
-    mode (str): 'live', 'past'
-    interval (int): minutes
-    endpoint (int): minutes
+    Outputs:
+        tweet_data: list of dictionaries sent to GIS
+        data_array: summary statistics table (rows: states, columns: time bins)
 
     Datetime offset-naive and offset-aware solved by link:
-
     '''
     #utc = pytz.UTC
-    bins = time_bins(mode, interval, endpoint)
-    mapping_dict, abbr_dict = read_location_info()
-    tweet_data = []
-
+    now = datetime.now(timezone.utc)
+    bins = time_bins(mode, now, interval, duration)
+    
     if mode == "past":
         # Collect tweets from the past by popularity
-        all_tweets = search_words(search_term)
+        all_tweets = search_words(search_term, now)
         # all_tweets.reverse()
     if mode == "live":
         # stream tweets live (ascending time)
-        all_tweets = stream_tweets(search_term)
+        all_tweets = stream_tweets(search_term, duration, now)
 
     # sort tweets into time intervals
-    tweet_batches = sort_tweets(all_tweets, bins, search_term)
+    tweet_batches = sort_tweets(all_tweets, bins, search_term, now)
 
     # for each time interval, determine the number of tweets per state
+    tweet_data = []
+    mapping_dict, abbr_dict = read_location_info()
     for batch in tweet_batches:
         state_counts = convert_location(batch, mapping_dict, abbr_dict)
         tweet_data.append(state_counts)
@@ -69,23 +76,31 @@ def collect_data(search_term, mode, interval, endpoint):
     return data_array
 
 
-def time_bins(mode, interval, endpoint):
+def time_bins(mode, now, interval, duration):
     '''
     Determines the time bin for each batch of tweets
 
     Inputs:
+        mode(str): "past" (search historical tweets) or "live" (stream tweets)
+        now: datetime object for function run time
+        interval (int): size of time bins (minutes)
+        duration (int): total length of time to collect data from (minutes)
 
     Returns: a list of tuples with format (start_time, end_time) in datetime format.
     Each tuple represents a time interval
     '''
     # Calculate the number of intervals specified
-    num_bins = int(float(endpoint) / interval)    # round down division
+    num_bins = int(float(duration) / interval)    # round down division
 
-    # Calculate the start time of the historical search
-    now = datetime.now(timezone.utc)
-    duration = timedelta(minutes=endpoint)
-    start = now - duration
+    # Convert to datetime workable format
+    total_time = timedelta(minutes=duration)
     interval = timedelta(minutes=interval)
+
+    # Determine the start time
+    if mode == "past":
+        start = now - total_time
+    elif mode == "live":
+        start = now
 
     # specify time intervals:
     bins = []
@@ -97,56 +112,31 @@ def time_bins(mode, interval, endpoint):
     return bins
 
 
-def sort_tweets(batch, bins, search_term):
+def search_words(input_query, now, limit=1000, search_type="mixed"):
     '''
-    Sorts a batch of tweets into given time interval bins.
+    Returns 1000 English tweets containing the searched word/hashtag.
+    Result contains a mix of popular and recent tweets.
 
     Inputs:
-        tweets: a list of tweet-dictionaries
-        bins: a list of start-end 2-tuples containing datetime objects
+        input_query(str): a word or hashtag
+        now: datetime object 
+        limit(int): max number of tweets to return
+        search_type: "mixed" or "recent" or "popular"
 
     Outputs:
-        a folder of JSON files for tweets from each time interval.
-    '''
-    # Create a new directory and put the divided json files into it
-    dt = datetime.now(timezone.utc)
-    formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
-    outdir = "{}_{}.json".format(search_term, formatted_dt)
-    if not os.path.exists(outdir):
-        os.mkdir(outdir)
+        outfile: json file of streamed tweets for reference and archiving
+        collection: list of tweet dictionaries
 
-    tweets_by_interval = [ [] for i in enumerate(bins) ]
-
-    for tweet in batch:
-        time = tweet['created_at']
-        time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
-
-        for ind_bin, timebin in enumerate(bins):
-            start, end = timebin
-            if start <= time <= end:
-                file_name = "{}_{}.json".format(search_term, str(ind_bin))
-                with open(os.path.join(outdir, file_name), 'a') as outfile:
-                    json.dump(tweet, outfile, indent=4)
-                    outfile.write('\n')
-                tweets_by_interval[ind_bin].append(tweet)
-                break
-
-    return tweets_by_interval
-
-
-def search_words(input_query, limit=100, search_type="mixed"):
-    '''
-    Performs a generic query according to query input with no filtering.
-
-    Input:
-        input_query(str): a standard input to search bar
-        limit(int): max of tweets returned
-
-    Returns:
-        a list of tweets, each in json format (a json file is also outputted)
+    Notes:
+    Function is heavily crippled by the limitations of the standard search API.
+    Very few tweets are marked "popular", and recent tweets are often only
+    from the past few minutes. In addition, there is no argument for getting
+    only tweets after a specified time. The function however works as it
+    should and should produce good data with a Premium/Enterprise Search API.
     '''
     collection = []
     # gathering a collection of tweets. Output: tweepy.cursor.ItemIterator
+    # excluding entities trims unneeded tweet info
     tweets = tw.Cursor(api.search,
                        input_query,
                        result_type=search_type,
@@ -160,12 +150,10 @@ def search_words(input_query, limit=100, search_type="mixed"):
         collection.append(entry._json)
 
     # get timestamp (twitter timestamp has colon, cannot be used for filename)
-    dt = datetime.now()
-    formatted_dt = dt.strftime("%Y-%m-%d_%H.%M")
+    formatted_dt = now.strftime("%Y-%m-%d_%H.%M")
 
     # write list into json file
-    file_name = "tweets_{}_{}.json".format(input_query, formatted_dt)
-
+    file_name = "searched_{}_{}.json".format(input_query, formatted_dt)
     with open(file_name, 'a') as outfile:
         # do not use json.dumps anywhere because it will string the dict
         json.dump(collection, outfile, indent=4)
@@ -174,30 +162,103 @@ def search_words(input_query, limit=100, search_type="mixed"):
 
 
 class MyStreamListener(tw.StreamListener):
+    # Details about the StreamListener class
+    # https://github.com/tweepy/tweepy/blob/master/tweepy/streaming.py
+
+    def __init__(self):
+        self.tweets = []
 
     def on_data(self, data):
         try:
-            with open('tweets.json', 'a') as f:
-                f.write(data)
-                print(data)
-                return True
+            # json.loads() converts string dictionary to dictionary
+            self.tweets.append(json.loads(data))
+            return True
         except BaseException as e:
             print("Error on_data: %s" % str(e))
             return True
 
-    def on_error(self, status_code):
+    def on_error(self, status_code): 
         if status_code == 420:
             # to check if rate limit occurs
             return False
-        print(status_code.text)
+        print(status_code)
 
 
-def stream_tweets(input_hashtag):
+def stream_tweets(input_hashtag, duration, now):
+    '''
+    Streams tweets that include a given hashtag for a certain amount of time.
+
+    Inputs:
+        input_hashtag(str): stream tweets containing this word
+        duration(int): time to stream for (minutes)
+        now: datetime object
+
+    Outputs:
+        outfile: json file of streamed tweets for reference and archiving
+        streamed_tweets: list of tweet dictionaries
+    '''
+    # get sleep time in seconds
+    wait_time = duration * 60
+
     listener = MyStreamListener()
-
     stream = tw.Stream(auth, listener)
 
-    stream.filter(track = [input_hashtag])
+    # start and stop stream
+    stream.filter(track = [input_hashtag], is_async=True)
+    time.sleep(wait_time)
+    stream.disconnect()
+
+    streamed_tweets = listener.tweets
+
+    formatted_dt = now.strftime("%Y-%m-%d_%H.%M")
+    file_name = "streamed_{}_{}.json".format(input_hashtag, formatted_dt)
+    with open(file_name, 'a') as outfile:
+        json.dump(streamed_tweets, outfile, indent=4)
+
+    return streamed_tweets
+
+
+def sort_tweets(batch, bins, search_term, now):
+    '''
+    Sorts a batch of tweets into given time interval bins.
+
+    Inputs:
+        tweets: a list of tweet-dictionaries
+        bins: a list of start-end 2-tuples containing datetime objects
+        search_term(str): the word that was searched
+        now: datetime object
+
+    Outputs:
+        outfile: json files of tweets (one file per bin), in new folder
+        tweets_by_interval: a list of lists of tweet-dictionaries
+    '''
+    tweets_by_interval = [ [] for i in enumerate(bins) ]
+
+    for tweet in batch:
+        # get time from tweet
+        time = tweet['created_at']
+        time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
+
+        # compare tweet and bin times and append to bin
+        for ind_bin, timebin in enumerate(bins):
+            start, end = timebin
+            if start <= time <= end:
+                tweets_by_interval[ind_bin].append(tweet)
+                break
+
+    # Create a new directory and put the divided json files into it
+    formatted_dt = now.strftime("%Y-%m-%d_%H.%M")
+    outdir = "{}_{}.json".format(search_term, formatted_dt)
+    if not os.path.exists(outdir):
+        os.mkdir(outdir)
+
+    # write file
+    for ind_bin, timebin in enumerate(bins):
+        file_name = "{}_{}.json".format(search_term, str(ind_bin))
+        with open(os.path.join(outdir, file_name), 'a') as outfile:
+            json.dump(tweets_by_interval[ind_bin], outfile, indent=4)
+
+    return tweets_by_interval
 
 
 def convert_location(tweet_data, mapping_dict, abbr_dict):
@@ -233,7 +294,7 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
                 place = tweet["place"]["full_name"]
                 # almost all geotagged locations in the US are of the form "city, ST"
                 for abbr, state in abbr_dict.items():
-                    if abbr in string:
+                    if abbr in place:
                         location_counts[state] += 1
 
         # checks if home location field is filled
