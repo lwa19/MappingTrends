@@ -7,8 +7,11 @@ This project is a part of the University of Chicago CMSC 12200 course. Program i
 
 ### Team members: 
 Pooja Barai (pbarai@uchicago.edu)
+
 Wesley Hsu (hsuerfan@uchicago.edu)
+
 Kunal Mahajan (xxx)
+
 Lijia Wang (lwang19@uchicago.edu)
 
 ## Developer notes:
@@ -44,3 +47,49 @@ MappingTrends
 | uscities.csv     - && 
 | Project Proposal.pdf     - project proposal
 ```
+
+## Workflow
+
+### Django Inputs:
+ - Search term
+    - string of the word or phrase 
+ - Mode 
+    - Past: scrape tweets from upto 7 days ago
+    - Live: stream tweets in live time
+ - Time Intervals
+    - to divide the total duration into time blocks
+    - there are 3 units: minutes, hours, days
+ - Duration
+    - the total time duration for streaming/scraping
+
+### Django Outputs:
+ - GIS heatmap
+    - there is one heatmap for each time block
+    - they are displayed as png files as a slideshow
+    - *
+    - && 
+ - Summary stats
+    - a table of the exact numbers per state per time block
+ - && possibly a histogram for counts per state 
+
+### Twitter Scraper:
+ - utilising the Twitter API 
+    - authentication - access tokens are obtained from Twitter Developer 
+    - tweepy is the python library utilised to access the Twitter API
+ - Tweet Collection 
+    - based on the input search term, scrapes or streams tweets for a specified time 
+    - collected tweets are stored in a json file
+    - archive all searches collected into &&
+ - Time bins division
+    - time bins are calculated according to total duration and interval sizes
+    - iterate through the collected tweets and sort them into corresponding json files in a new folder
+
+### GIS *
+
+### Integration into Django && 
+
+
+
+## Challenges
+
+## Acknowledgements
