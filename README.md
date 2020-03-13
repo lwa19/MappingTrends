@@ -20,9 +20,8 @@ Lijia Wang (lwang19@uchicago.edu)
 
 ```
 pip3 install tweepy
-pip3 install django
+pip3 install Django
 pip3 install geopandas
-pip3 install shapefile
 pip3 install descartes
 *
 ```
