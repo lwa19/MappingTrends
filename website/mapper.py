@@ -72,7 +72,7 @@ class Shapefile:
 
         if len(plot_list) == 1:
             assert type(file_name) == str
-            plot_list[0].savefig('./static/Plot_pngs/' + file_name + '.png')
+            plot_list[0].savefig('./Plot_pngs/' + file_name + '.png')
             output_path.append('./Plot_pngs/' + file_name + '.png')
         else:
             assert (type(file_name) == list and type(file_name[0]) == str) or type(file_name) == str
@@ -88,9 +88,8 @@ class Shapefile:
             for i, plot in enumerate(plot_list):
                 # plot.savefig('./Plot_pngs/' + file_name + "("+str(i)+").png")
                 # output_path.append('./Plot_pngs/' + file_name + "("+str(i)+").png")
-                plot.savefig('./static/Plot_pngs/' + names_list[i]+".png")
+                plot.savefig('./Plot_pngs/' + names_list[i]+".png")
                 output_path.append('./Plot_pngs/' + names_list[i]+".png")
-
         return output_path
 
 
@@ -102,7 +101,7 @@ def map_data(dict_data, col_names, file_name, show_plot = True):
     All-in-one function that creates new Shapefile object, adds data to
         geodataframe and plots data.
     Inputs: 
-            dict_data (list of dicts)
+            dict_data (list of dicts) key STATE ABBR to integer/count values
             col_names (list of strings)
             file_name: Determines names of written .png files, some flexibility on datatype
                 (string): basefilename, if multiple images are to be made it appends an integer
@@ -164,7 +163,7 @@ def build_plot(shapefile_object, file_name, col = 'count', show_plot = True):
 
     return fig
 
-def get_color_bins(geoframe, col = 'count'):
+def get_color_bins(geoframe, col = 'count', unified_scale = True):
     temp_map  = {}
     temp_list = []
     list_key = []
@@ -182,8 +181,16 @@ def get_color_bins(geoframe, col = 'count'):
 
     assert len(list_key) == len(list_val)
     ##print(list_val)
-    list_val = pd.qcut(list_val, q = 4, labels = [1,2,3,4])
-
+    list_val, bins = pd.qcut(list_val, q = 4, duplicates = 'drop', retbins = True)
+    print(list_val)
+    names = bins.size
+    list1 = list(range(1,names))
+    print('list:' + str(list1))
+    print('bins: ' + str(bins))
+    print('bins size: ' + str(bins.size))
+    list_val = pd.Series(list_val)
+    list_val = list_val.cat.rename_categories(list1)
+    print(list_val)
     ##print(list_key)
 
     for i, state in enumerate(list_key):
