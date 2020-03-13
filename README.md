@@ -31,25 +31,25 @@ pip3 install descartes
 
 ```
 MappingTrends
-| website/             - all of the Django implementation
-	| states_21basic   - all of the GIS data files *
-    | static/          - website accessible files
-		| archive/     - tweet jsons for each search/stream query made, for easy reanalysis (with different intervals etc)
-		| Plot_pngs/   - all of the output png files
-		| main.css     - file used to format the website
-    | trendmap/        - all of the template and index
-		| templates/   - website html files
-		| views.py     - views file where the django input is processed and page is returned
-    | ui/              - URLs
-		| settings.py  -
-    | manage.py        - the code used to run the website
-	| tweet_gather.py  - scraping and parsing tweets
-	| mapper.py        - visualizing the parsed tweet data
-	| twitter_credentials_template.json     - template for formatting your twitter access credentials
-| past_files           - all of the past files that we no longer need
-| states.shp           - shape file for the states*
-| uscities.csv         - data source for US cities https://simplemaps.com/data/us-cities (Basic)
-| Project Proposal.pdf - project proposal
+| website/             		- all of the Django implementation
+	| states_21basic   	- all of the GIS data files *
+    	| static/          	- website accessible files
+		| archive/     	- tweet jsons for each search/stream query made, for easy reanalysis (with different intervals etc)
+		| Plot_pngs/   	- all of the output png files
+		| main.css     	- file used to format the website
+    | trendmap/                	- all of the template and index
+		| templates/   	- website html files
+		| views.py     	- views file where the django input is processed and page is returned
+    | ui/                      	- URLs
+		| settings.py  	-
+    	| manage.py            	- the code used to run the website
+	| tweet_gather.py      	- scraping and parsing tweets
+	| mapper.py            	- visualizing the parsed tweet data
+| twitter_credentials_template.json     - template for formatting your twitter access credentials
+| past_files           		- all of the past files that we no longer need
+| states.shp           		- shape file for the states*
+| uscities.csv         		- data source for US cities https://simplemaps.com/data/us-cities (Basic)
+| Project Proposal.pdf 		- project proposal
 ```
 
 ## Workflow
