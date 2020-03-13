@@ -23,6 +23,7 @@ pip3 install tweepy
 pip3 install Django
 pip3 install geopandas
 pip3 install descartes
+pip3 install pyshp
 *
 ```
 
