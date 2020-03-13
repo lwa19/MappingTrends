@@ -31,7 +31,7 @@ def collect_data(search_term, mode, interval, duration):
     '''
     Master function that runs the necessary helper functions in sequence in
     response to the inputs given by the user.
-    
+
     Inputs:
         search_term (str): input from the user
         mode (str): "past" (search historical tweets) or "live" (stream tweets)
@@ -46,7 +46,7 @@ def collect_data(search_term, mode, interval, duration):
     '''
     now = datetime.now(timezone.utc)
     bins = time_bins(mode, now, interval, duration)
-    
+
     if mode == "past":
         # Collect tweets from the past by popularity
         all_tweets = search_words(search_term, now)
@@ -111,7 +111,7 @@ def search_words(input_query, now, limit=1000, search_type="mixed"):
 
     Inputs:
         input_query(str): a word or hashtag
-        now: datetime object 
+        now: datetime object
         limit(int): max number of tweets to return
         search_type: "mixed" or "recent" or "popular"
 
@@ -169,7 +169,7 @@ class MyStreamListener(tw.StreamListener):
             print("Error on_data: %s" % str(e))
             return True
 
-    def on_error(self, status_code): 
+    def on_error(self, status_code):
         if status_code == 420:
             # to check if rate limit occurs
             return False

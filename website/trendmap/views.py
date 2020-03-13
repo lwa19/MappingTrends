@@ -12,7 +12,6 @@ from django import forms
 from tweet_gather import collect_data
 from mapper import map_data
 
-
 # RES_DIR = os.path.join(os.path.dirname(__file__), '..', 'res')
 
 MODES = [('past', 'Past'), ('live', 'Live')]
@@ -160,7 +159,7 @@ def home(request):
 
             # check limit validity
             errors = validate_inputs(mode, interval, duration)
-            if len(errors) == 0:                
+            if len(errors) == 0:
                 try:
                     data = collect_data(search_term, mode, interval, duration)
                     print("got data")
