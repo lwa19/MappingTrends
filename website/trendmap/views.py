@@ -193,7 +193,7 @@ def home(request):
             colnames.append(str(index))
         filename = search_term
         context['map'] = map_data(data, colnames, filename, show_plot=False)
-        print(context['map'])
+        # print(context['map'])
 
         # format as a dataframe
         data_array = pd.DataFrame(data)
@@ -201,7 +201,7 @@ def home(request):
         # name the bins
         data_array = data_array.to_html()
         context['array'] = data_array
-        print(context['array'])
+        # print(context['array'])
 
     context['form'] = form
     return render(request, 'index.html', context)

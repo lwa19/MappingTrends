@@ -104,7 +104,7 @@ def time_bins(mode, now, interval, duration):
     return bins
 
 
-def search_words(input_query, now, limit=1000, search_type="mixed"):
+def search_words(input_query, now, limit=100, search_type="mixed"):
     '''
     Returns 1000 English tweets containing the searched word/hashtag.
     Result contains a mix of popular and recent tweets.
@@ -295,6 +295,15 @@ def convert_location(tweet_data, mapping_dict, abbr_dict):
             state = parse_home_location(home_location, mapping_dict, abbr_dict)
             if state:
                 location_counts[state] += 1
+
+    del_keys = []
+    for abbr, count in location_counts.items():
+        if count == 0:
+            del_keys.append(abbr)
+
+    for abbr in del_keys:
+        del location_counts[abbr]
+
 
     return location_counts
 

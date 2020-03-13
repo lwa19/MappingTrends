@@ -72,7 +72,7 @@ class Shapefile:
 
         if len(plot_list) == 1:
             assert type(file_name) == str
-            plot_list[0].savefig('./Plot_pngs/' + file_name + '.png')
+            plot_list[0].savefig('.static/Plot_pngs/' + file_name + '.png')
             output_path.append('./Plot_pngs/' + file_name + '.png')
         else:
             assert (type(file_name) == list and type(file_name[0]) == str) or type(file_name) == str
@@ -88,7 +88,7 @@ class Shapefile:
             for i, plot in enumerate(plot_list):
                 # plot.savefig('./Plot_pngs/' + file_name + "("+str(i)+").png")
                 # output_path.append('./Plot_pngs/' + file_name + "("+str(i)+").png")
-                plot.savefig('./Plot_pngs/' + names_list[i]+".png")
+                plot.savefig('./static/Plot_pngs/' + names_list[i]+".png")
                 output_path.append('./Plot_pngs/' + names_list[i]+".png")
         return output_path
 
