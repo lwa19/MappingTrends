@@ -169,12 +169,11 @@ def get_color_bins(geoframe, col = 'count', unified_scale = True):
     list_none = []
     for row in geoframe.iterrows():
         ##print(row[1][col], type(row[1][col]))
-        # if pd.notna(row[1][col]): ##??check for null
-        if pd.notna(row[1]['1']):
+        if pd.notna(row[1][col]): ##??check for null
             #temp_list.append((row[1]['STATE_ABBR'],row[1]['count']))
             list_key.append(row[1]['STATE_ABBR'])
-            # list_val.append(row[1][col])
-            list_val.append(row[1]['1'])
+            list_val.append(row[1][col])
+
         else:
             ##print("appended none")
             list_none.append(row[1]['STATE_ABBR'])
@@ -193,6 +192,7 @@ def get_color_bins(geoframe, col = 'count', unified_scale = True):
     list_val4 = pd.Series(list_val3)
     list_val5 = list_val4.cat.rename_categories(list_labels)
     print(list_val5)
+    list_val = list_val5.copy()
     ##print(list_key)
 
     for i, state in enumerate(list_key):
