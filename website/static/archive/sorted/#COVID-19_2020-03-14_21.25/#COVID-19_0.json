@@ -1,0 +1,615 @@
+[
+    {
+        "is_quote_status": false,
+        "possibly_sensitive": false,
+        "id": 1238602430515941377,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 16545,
+        "source": "<a href=\"https://mobile.twitter.com\" rel=\"nofollow\">Twitter Web App</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 44513878,
+            "profile_link_color": "F15D5A",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme14/bg.gif",
+            "friends_count": 59765,
+            "profile_use_background_image": true,
+            "profile_sidebar_border_color": "FFFFFF",
+            "profile_text_color": "292929",
+            "url": "http://t.co/THOyB5XQbo",
+            "utc_offset": null,
+            "followers_count": 214763,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/44513878/1581511162",
+            "created_at": "Thu Jun 04 01:37:46 +0000 2009",
+            "description": "A member-supported, nonpartisan newsroom informing & engaging Texans on state politics & policy. Tweets by @regmack_. Subscribe: https://t.co/7vzWxFt29b",
+            "statuses_count": 85956,
+            "follow_request_sent": false,
+            "profile_background_color": "2E3A58",
+            "has_extended_profile": false,
+            "following": false,
+            "name": "Texas Tribune",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "FFF6DD",
+            "translator_type": "none",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1190790308860190720/z8WO5CjJ_normal.jpg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/1190790308860190720/z8WO5CjJ_normal.jpg",
+            "listed_count": 5007,
+            "entities": {
+                "url": {
+                    "urls": [
+                        {
+                            "indices": [
+                                0,
+                                22
+                            ],
+                            "url": "http://t.co/THOyB5XQbo",
+                            "display_url": "texastribune.org",
+                            "expanded_url": "http://www.texastribune.org"
+                        }
+                    ]
+                },
+                "description": {
+                    "urls": [
+                        {
+                            "indices": [
+                                129,
+                                152
+                            ],
+                            "url": "https://t.co/7vzWxFt29b",
+                            "display_url": "trib.it/subscribe",
+                            "expanded_url": "http://trib.it/subscribe"
+                        }
+                    ]
+                }
+            },
+            "favourites_count": 3148,
+            "is_translation_enabled": false,
+            "profile_background_tile": false,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme14/bg.gif",
+            "geo_enabled": true,
+            "location": "Austin, Texas",
+            "default_profile": false,
+            "screen_name": "TexasTribune",
+            "id_str": "44513878",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Fri Mar 13 23:06:46 +0000 2020",
+        "text": "Stop buying all the toilet paper.\n\nStop stockpiling groceries and household supplies. \n\nThere's no shortage if ever\u2026 https://t.co/Bz1c5DwZ94",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 27968,
+        "id_str": "1238602430515941377",
+        "lang": "en"
+    },
+    {
+        "is_quote_status": false,
+        "id": 1238618948272259073,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 23485,
+        "source": "<a href=\"https://about.twitter.com/products/tweetdeck\" rel=\"nofollow\">TweetDeck</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 17004618,
+            "profile_link_color": "0084B4",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+            "friends_count": 2284,
+            "profile_use_background_image": true,
+            "profile_sidebar_border_color": "BDDCAD",
+            "profile_text_color": "333333",
+            "url": "https://t.co/CO7uxBqpWU",
+            "utc_offset": null,
+            "followers_count": 2049769,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/17004618/1578340725",
+            "created_at": "Mon Oct 27 19:14:53 +0000 2008",
+            "description": "Oregon farmboy turned NY Times columnist, author with my wife, @WuDunn, of \"Tightrope\" https://t.co/NR8ScP6Bgr",
+            "statuses_count": 43078,
+            "follow_request_sent": false,
+            "profile_background_color": "9AE4E8",
+            "has_extended_profile": false,
+            "following": false,
+            "name": "Nicholas Kristof",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "DDFFCC",
+            "translator_type": "none",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/680936862387589120/DfkrlW27_normal.jpg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/680936862387589120/DfkrlW27_normal.jpg",
+            "listed_count": 23362,
+            "entities": {
+                "url": {
+                    "urls": [
+                        {
+                            "indices": [
+                                0,
+                                23
+                            ],
+                            "url": "https://t.co/CO7uxBqpWU",
+                            "display_url": "nytimes.com/kristof",
+                            "expanded_url": "http://www.nytimes.com/kristof"
+                        }
+                    ]
+                },
+                "description": {
+                    "urls": [
+                        {
+                            "indices": [
+                                87,
+                                110
+                            ],
+                            "url": "https://t.co/NR8ScP6Bgr",
+                            "display_url": "bit.ly/2qUsgvr",
+                            "expanded_url": "https://bit.ly/2qUsgvr"
+                        }
+                    ]
+                }
+            },
+            "favourites_count": 55,
+            "is_translation_enabled": false,
+            "profile_background_tile": true,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+            "geo_enabled": true,
+            "location": "Everywhere",
+            "default_profile": false,
+            "screen_name": "NickKristof",
+            "id_str": "17004618",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Sat Mar 14 00:12:24 +0000 2020",
+        "text": "A hospital in Seattle area has sent out a note to staff, shared with me, suspending elective surgery and warning th\u2026 https://t.co/mZoPALxC5H",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 52066,
+        "id_str": "1238618948272259073",
+        "lang": "en"
+    },
+    {
+        "is_quote_status": false,
+        "id": 1238823680735612930,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 13629,
+        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 25073877,
+            "profile_link_color": "1B95E0",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+            "friends_count": 47,
+            "profile_use_background_image": true,
+            "profile_sidebar_border_color": "BDDCAD",
+            "profile_text_color": "333333",
+            "url": "https://t.co/OMxB0x7xC5",
+            "utc_offset": null,
+            "followers_count": 73904126,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/25073877/1583212785",
+            "created_at": "Wed Mar 18 13:46:38 +0000 2009",
+            "description": "45th President of the United States of America\ud83c\uddfa\ud83c\uddf8",
+            "statuses_count": 49788,
+            "follow_request_sent": false,
+            "profile_background_color": "6D5C18",
+            "has_extended_profile": false,
+            "following": false,
+            "name": "Donald J. Trump",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "C5CEC0",
+            "translator_type": "regular",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_normal.jpg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/874276197357596672/kUuht00m_normal.jpg",
+            "listed_count": 116335,
+            "entities": {
+                "url": {
+                    "urls": [
+                        {
+                            "indices": [
+                                0,
+                                23
+                            ],
+                            "url": "https://t.co/OMxB0x7xC5",
+                            "display_url": "Instagram.com/realDonaldTrump",
+                            "expanded_url": "http://www.Instagram.com/realDonaldTrump"
+                        }
+                    ]
+                },
+                "description": {
+                    "urls": []
+                }
+            },
+            "favourites_count": 7,
+            "is_translation_enabled": true,
+            "profile_background_tile": true,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+            "geo_enabled": true,
+            "location": "Washington, DC",
+            "default_profile": false,
+            "screen_name": "realDonaldTrump",
+            "id_str": "25073877",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Sat Mar 14 13:45:56 +0000 2020",
+        "text": "Attending meetings on Covid-19 in the White House. Working with States and local governments, many of whom have don\u2026 https://t.co/maisJh7k5l",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 77210,
+        "id_str": "1238823680735612930",
+        "lang": "en"
+    },
+    {
+        "is_quote_status": false,
+        "possibly_sensitive": false,
+        "id": 1238654731171401730,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 10327,
+        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 42562446,
+            "profile_link_color": "0084B4",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+            "friends_count": 765,
+            "profile_use_background_image": true,
+            "profile_sidebar_border_color": "FFFFFF",
+            "profile_text_color": "333333",
+            "url": "https://t.co/M6aanqReRy",
+            "utc_offset": null,
+            "followers_count": 14149614,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/42562446/1580094204",
+            "created_at": "Tue May 26 04:15:37 +0000 2009",
+            "description": "Believer. Husband to @ayeshacurry, father to Riley, Ryan and Canon, son, brother. Golden State Warriors guard. Davidson Wildcat. Philippians 4:13 #IWILL",
+            "statuses_count": 7232,
+            "follow_request_sent": false,
+            "profile_background_color": "C0DEED",
+            "has_extended_profile": false,
+            "following": false,
+            "name": "Stephen Curry",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "DDEEF6",
+            "translator_type": "none",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1221629746234060800/wNXHLb8J_normal.jpg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/1221629746234060800/wNXHLb8J_normal.jpg",
+            "listed_count": 14822,
+            "entities": {
+                "url": {
+                    "urls": [
+                        {
+                            "indices": [
+                                0,
+                                23
+                            ],
+                            "url": "https://t.co/M6aanqReRy",
+                            "display_url": "SC30.com",
+                            "expanded_url": "http://www.SC30.com"
+                        }
+                    ]
+                },
+                "description": {
+                    "urls": []
+                }
+            },
+            "favourites_count": 726,
+            "is_translation_enabled": true,
+            "profile_background_tile": false,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+            "geo_enabled": true,
+            "location": "Worldwide",
+            "default_profile": false,
+            "screen_name": "StephenCurry30",
+            "id_str": "42562446",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Sat Mar 14 02:34:35 +0000 2020",
+        "text": "Oakland is closing schools bc of COVID-19. We support this decision but are concerned a/b the 18,000+ kids that rel\u2026 https://t.co/TWlOb3bfpr",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 60587,
+        "id_str": "1238654731171401730",
+        "lang": "en"
+    },
+    {
+        "is_quote_status": false,
+        "id": 1238817274590629888,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 11162,
+        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 1383272101,
+            "profile_link_color": "1DA1F2",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+            "friends_count": 828,
+            "profile_use_background_image": true,
+            "profile_sidebar_border_color": "C0DEED",
+            "profile_text_color": "333333",
+            "url": "https://t.co/iPF82cS0sr",
+            "utc_offset": null,
+            "followers_count": 277209,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/1383272101/1568516684",
+            "created_at": "Sat Apr 27 01:21:12 +0000 2013",
+            "description": "Former Medicare, Medicaid & ACA head for Obama. Founded @usofcare & @townhallvntrs to make health care work. Never broke a website, only fixed a big one.",
+            "statuses_count": 28095,
+            "follow_request_sent": false,
+            "profile_background_color": "C0DEED",
+            "has_extended_profile": true,
+            "following": false,
+            "name": "Andy Slavitt",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "DDEEF6",
+            "translator_type": "none",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1170550103800721409/gF6azei__normal.jpg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/1170550103800721409/gF6azei__normal.jpg",
+            "listed_count": 3637,
+            "entities": {
+                "url": {
+                    "urls": [
+                        {
+                            "indices": [
+                                0,
+                                23
+                            ],
+                            "url": "https://t.co/iPF82cS0sr",
+                            "display_url": "unitedstatesofcare.org",
+                            "expanded_url": "http://www.unitedstatesofcare.org"
+                        }
+                    ]
+                },
+                "description": {
+                    "urls": []
+                }
+            },
+            "favourites_count": 28979,
+            "is_translation_enabled": false,
+            "profile_background_tile": false,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+            "geo_enabled": false,
+            "location": "Edina, MN and Washington, DC",
+            "default_profile": true,
+            "screen_name": "ASlavitt",
+            "id_str": "1383272101",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Sat Mar 14 13:20:29 +0000 2020",
+        "text": "COVID-19 Prep Update- March 14:\n\nLast night I was on with state &amp; local officials around the US well into the night\u2026 https://t.co/M8IDrFgH5S",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 20391,
+        "id_str": "1238817274590629888",
+        "lang": "en"
+    },
+    {
+        "is_quote_status": false,
+        "id": 1238695530097594375,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 10911,
+        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 749686190,
+            "profile_link_color": "1B95E0",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+            "friends_count": 2477,
+            "profile_use_background_image": false,
+            "profile_sidebar_border_color": "000000",
+            "profile_text_color": "000000",
+            "url": null,
+            "utc_offset": null,
+            "followers_count": 48011,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/749686190/1456896448",
+            "created_at": "Fri Aug 10 16:56:27 +0000 2012",
+            "description": "Anchor @OANN Weekdays at 12PM, 3PM, & 6PM EST",
+            "statuses_count": 6361,
+            "follow_request_sent": false,
+            "profile_background_color": "000000",
+            "has_extended_profile": true,
+            "following": false,
+            "name": "Jennifer Franco",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "000000",
+            "translator_type": "none",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/566020836792864769/tpwX4Bay_normal.jpeg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/566020836792864769/tpwX4Bay_normal.jpeg",
+            "listed_count": 253,
+            "entities": {
+                "description": {
+                    "urls": []
+                }
+            },
+            "favourites_count": 10017,
+            "is_translation_enabled": false,
+            "profile_background_tile": false,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+            "geo_enabled": false,
+            "location": "San Diego",
+            "default_profile": false,
+            "screen_name": "jennfranconews",
+            "id_str": "749686190",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Sat Mar 14 05:16:42 +0000 2020",
+        "text": "#BREAKING The House votes 363-40 to pass the \u2018Families First Coronavirus Response Act\u2019, putting tens of billions of\u2026 https://t.co/CD5ZzZ4NQ9",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 46561,
+        "id_str": "1238695530097594375",
+        "lang": "en"
+    },
+    {
+        "is_quote_status": false,
+        "possibly_sensitive": false,
+        "id": 1238717395058876416,
+        "geo": null,
+        "in_reply_to_user_id_str": null,
+        "retweet_count": 8138,
+        "source": "<a href=\"http://twitter.com/download/iphone\" rel=\"nofollow\">Twitter for iPhone</a>",
+        "user": {
+            "protected": false,
+            "is_translator": false,
+            "id": 1636590253,
+            "profile_link_color": "0084B4",
+            "time_zone": null,
+            "notifications": false,
+            "profile_background_image_url": "http://abs.twimg.com/images/themes/theme1/bg.png",
+            "friends_count": 68,
+            "profile_use_background_image": false,
+            "profile_sidebar_border_color": "FFFFFF",
+            "profile_text_color": "333333",
+            "url": null,
+            "utc_offset": null,
+            "followers_count": 11700992,
+            "profile_banner_url": "https://pbs.twimg.com/profile_banners/1636590253/1535753003",
+            "created_at": "Wed Jul 31 22:41:25 +0000 2013",
+            "description": "Apple CEO \uf8ff Auburn \ud83c\udfc0 \ud83c\udfc8 Duke \ud83c\udfc0 National Parks \ud83c\udfde\ufe0f \u201cLife's most persistent and urgent question is, 'What are you doing for others?'\u201d - MLK",
+            "statuses_count": 992,
+            "follow_request_sent": false,
+            "profile_background_color": "C0DEED",
+            "has_extended_profile": false,
+            "following": false,
+            "name": "Tim Cook",
+            "contributors_enabled": false,
+            "profile_sidebar_fill_color": "DDEEF6",
+            "translator_type": "none",
+            "profile_image_url": "http://pbs.twimg.com/profile_images/1194113737092935681/63O1znGw_normal.jpg",
+            "default_profile_image": false,
+            "verified": true,
+            "profile_image_url_https": "https://pbs.twimg.com/profile_images/1194113737092935681/63O1znGw_normal.jpg",
+            "listed_count": 0,
+            "entities": {
+                "description": {
+                    "urls": []
+                }
+            },
+            "favourites_count": 1930,
+            "is_translation_enabled": false,
+            "profile_background_tile": false,
+            "profile_background_image_url_https": "https://abs.twimg.com/images/themes/theme1/bg.png",
+            "geo_enabled": true,
+            "location": "Cupertino",
+            "default_profile": false,
+            "screen_name": "tim_cook",
+            "id_str": "1636590253",
+            "lang": null
+        },
+        "favorited": false,
+        "in_reply_to_screen_name": null,
+        "in_reply_to_status_id_str": null,
+        "coordinates": null,
+        "in_reply_to_status_id": null,
+        "in_reply_to_user_id": null,
+        "created_at": "Sat Mar 14 06:43:35 +0000 2020",
+        "text": "In our workplaces and communities, we must do all we can to prevent the spread of COVID-19. Apple will be temporari\u2026 https://t.co/OfhWUQms0i",
+        "contributors": null,
+        "place": null,
+        "retweeted": false,
+        "truncated": true,
+        "metadata": {
+            "iso_language_code": "en",
+            "result_type": "popular"
+        },
+        "favorite_count": 24209,
+        "id_str": "1238717395058876416",
+        "lang": "en"
+    }
+]
