@@ -131,6 +131,9 @@ def validate_inputs(mode, interval, duration):
         time, units = parameters[3]
         msg = "Total duration must be less than {} {}".format(time, units)
         errors.append(msg)
+    if duration < interval:
+        msg = "Total duration must be equal to or larger than interval size."
+        errors.append(msg)
 
     return errors
 
@@ -162,7 +165,6 @@ def home(request):
             if len(errors) == 0:
                 try:
                     data = collect_data(search_term, mode, interval, duration)
-                    print("got data")
                 except Exception as e:
                     print('Exception caught')
                     bt = traceback.format_exception(*sys.exc_info()[:3])
@@ -179,13 +181,11 @@ def home(request):
                 data = None
     else:
         form = SearchForm()
-        print("idk")
 
     # handle different responses of data
     if data is None:
         context['map'] = None
         context['array'] = None
-        print('no data')
     else:
         # call mapper, returns image filenames
         colnames = []
