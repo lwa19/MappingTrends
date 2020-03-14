@@ -26,7 +26,7 @@ PAST_LIMITS = ((1, "minutes"),
 LIVE_LIMITS = ((1, "minutes"),
                (1, "hours"),
                (2, "minutes"),
-               (5, "hours"))
+               (6, "hours"))
 
 class TimeSelector(forms.MultiValueField):
     def __init__(self, *args, **kwargs):
@@ -61,7 +61,7 @@ class SearchForm(forms.Form):
         required=True)
     bins = TimeSelector(
         label='Time Interval',
-        help_text='Length of each time block interval (Min: 1 min, Max: 1 day)',
+        help_text='Length of each time block interval',
         widget=forms.widgets.MultiWidget(
             widgets=(forms.widgets.NumberInput,
                      forms.widgets.Select(choices=UNITS))))

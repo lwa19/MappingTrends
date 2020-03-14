@@ -134,11 +134,8 @@ twitter_credentials.json
 
 # DS_Store
 .DS_Store
+
+# File types
 *.json
 *.ipynb
-Trumpdemic/Trumpdemic_0
-Trumpdemic/Trumpdemic_1
-Trumpdemic/Trumpdemic_2
-Trumpdemic/Trumpdemic_3
-Trumpdemic/Trumpdemic_4
-*.json
+*.png

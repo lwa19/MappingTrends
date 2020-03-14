@@ -1,4 +1,4 @@
- # Scraping Tweets as an initial file
+# Scraping Tweets as an initial file
 
 # Note: We are limited to 7 days of archive searching with the free API
 # https://developer.twitter.com/en/pricing
@@ -65,7 +65,6 @@ def collect_data(search_term, mode, interval, duration):
         state_counts = convert_location(batch, mapping_dict, abbr_dict)
         tweet_data.append(state_counts)
 
-    print(tweet_data)
     return tweet_data
 
 
@@ -101,11 +100,11 @@ def time_bins(mode, now, interval, duration):
         end = start + interval
         bins.append((start, end))
         start = end
-
+    print(bins)
     return bins
 
 
-def search_words(input_query, now, limit=200, search_type="mixed"):
+def search_words(input_query, now, limit=200, search_type="popular"):
     '''
     Returns 1000 English tweets containing the searched word/hashtag.
     Result contains a mix of popular and recent tweets.
@@ -146,7 +145,8 @@ def search_words(input_query, now, limit=200, search_type="mixed"):
     formatted_dt = now.strftime("%Y-%m-%d_%H.%M")
 
     # write list into json file
-    file_name = "searched_{}_{}.json".format(input_query, formatted_dt)
+    file_name = "static/archive/searched_{}_{}.json".format(input_query, \
+                                                            formatted_dt)
     with open(file_name, 'a') as outfile:
         # do not use json.dumps anywhere because it will string the dict
         json.dump(collection, outfile, indent=4)
@@ -204,7 +204,8 @@ def stream_tweets(input_hashtag, duration, now):
     streamed_tweets = listener.tweets
 
     formatted_dt = now.strftime("%Y-%m-%d_%H.%M")
-    file_name = "streamed_{}_{}.json".format(input_hashtag, formatted_dt)
+    file_name = "static/archive/streamed_{}_{}.json".format(input_hashtag, \
+                                                            formatted_dt)
     with open(file_name, 'a') as outfile:
         json.dump(streamed_tweets, outfile, indent=4)
 
@@ -241,7 +242,7 @@ def sort_tweets(batch, bins, search_term, now):
 
     # Create a new directory and put the divided json files into it
     formatted_dt = now.strftime("%Y-%m-%d_%H.%M")
-    outdir = "{}_{}.json".format(search_term, formatted_dt)
+    outdir = "static/archive/sorted/{}_{}".format(search_term, formatted_dt)
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 

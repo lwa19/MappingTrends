@@ -31,25 +31,25 @@ pip3 install pyshp
 
 ```
 MappingTrends
-| website/             		- all of the Django implementation
-	| states_21basic   	- all of the GIS data files *
-    	| static/          	- website accessible files
-		| archive/     	- tweet jsons for each search/stream query made, for easy reanalysis (with different intervals etc)
-		| Plot_pngs/   	- all of the output png files
-		| main.css     	- file used to format the website
-    | trendmap/                	- all of the template and index
-		| templates/   	- website html files
-		| views.py     	- views file where the django input is processed and page is returned
-    | ui/                      	- URLs
-		| settings.py  	-
-    	| manage.py            	- the code used to run the website
-	| tweet_gather.py      	- scraping and parsing tweets
-	| mapper.py            	- visualizing the parsed tweet data
-| twitter_credentials_template.json     - template for formatting your twitter access credentials
-| past_files           		- all of the past files that we no longer need
-| states.shp           		- shape file for the states*
-| uscities.csv         		- data source for US cities https://simplemaps.com/data/us-cities (Basic)
-| Project Proposal.pdf 		- project proposal
+| website/              	   - all of the Django implementation
+	| states_21basic   	       - all of the GIS data files *
+    	| static/          	   - website accessible files
+		    | archive/     	   - tweet jsons for each search/stream query made
+                | sorted/      - folder for storing tweets by time interval
+		    | Plot_pngs/   	   - all of the output png files
+		| main.css     	       - file used to format the website
+    | trendmap/                - all of the template and index
+		| templates/   	       - website html files
+		| views.py     	       - views file where the django input is processed and page is returned
+    | ui/                      - technical files
+		| settings.py  	       - website settings
+    | manage.py            	   - the code used to run the website
+	| tweet_gather.py      	   - scraping and parsing tweets
+	| mapper.py            	   - visualizing the parsed tweet data
+    | twitter_credentials.json - twitter access tokens
+    | uscities.csv             - data source for US cities https://simplemaps.com/data/us-cities (Basic)
+| past_files           		   - all of the past files that we no longer need
+| Project Proposal.pdf 		   - project proposal
 ```
 
 ## Workflow
@@ -122,14 +122,20 @@ MappingTrends
 
 6. GIS*
 
-7. Django took a long time to really understand as it used a lot of unfamiliar concepts and the explanations available often seemed to assume more knowledge than we had. We used the PA3 Django code as a starting point both for creating our website and understanding Django beyond Lab 5, but the code there basically had no documentation and used even more unfamiliar concepts (super, *args, etc).
+7. Django took a long time to really understand as it used a lot of unfamiliar concepts and the explanations available often seemed to assume more knowledge than we had. We used the PA3 Django code as a starting point both for creating our website and understanding Django beyond Lab 5, but the code there basically had no documentation and used even more unfamiliar concepts (super, kwargs, etc).
 
 ## Notable Limitations
 
-1. Twitter's Standard Search API is quite limited in terms of the number of tweets returnable, and does not return a nice spread of tweets. As stated by twitter, it is also not designed for completeness of results (as opposed to Premium and Enterprise paid APIs). The most recent tweets make up the vast majority of tweets. While popular tweets can be returned, the number of tweets that are marked "popular" by twitter is extremely low, as evident when the result type is changed to "popular". The function works best for less popular search terms, but will be still expected to give worse results than tweet streaming.
+1. Twitter's Standard Search API is quite limited in terms of the number of tweets returnable, and does not return a nice spread of tweets. As stated by twitter, it is also not designed for completeness of results (as opposed to Premium and Enterprise paid APIs). The type of result can be set with the "search type" keyword argument in search_words in tweet_gather. However, all three types have major issues:
+    - "mixed" results cluster primarily at a time several hours back (which seems variable). There is also a smaller cluster of recent tweets and a handful of tweets that fall outside these two clusters
+    - "recent" results only return the most recent tweets. Unlike what Twitter's API claims, this is the default setting for result_type, not "mixed"
+    - "popular" results return a nice spread, but the number of results is quite small
 
 2. The city recognition function is quite inefficient due to needing to check the home location string for every single city. As some cities are made up of more than one word, it is not enough to simply look up every word of the home location in the city set for each state.
 
+3. When searching for a globally relevant hashtag, the number of tweets returned per state will be quite small. This is because there is no way to filter for US location tweets without parsing the tweet info itself (as seen in Challenges 3, this results in issues). A large number of the returned tweets will thus be from outside of the US. We recommend searching for primarily US relevant hashtags (eg. political ones) to get more results.
+
+4. Search terms that are not hashtags will return tweets by a user whose Twitter name contains that search term. This is an inherent property of twitter's search function. We recommend always using hashtags or only using words that would be unlikely to be in a person's username.
 
 ## Acknowledgements
 

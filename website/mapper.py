@@ -110,9 +110,9 @@ def map_data(dict_data, col_names, file_name, show_plot = True):
         paths (list of strings): representing filepaths that images are written to
 
     '''
-    print(dict_data)
-    print(col_names)
-    print(file_name)
+    # print(dict_data)
+    # print(col_names)
+    # print(file_name)
     map1 = Shapefile()
     map1.add_data(dict_data,col_names)
     paths =  map1.plot_data(file_name, show_plot)
@@ -155,7 +155,7 @@ def build_plot(shapefile_object, file_name, col = 'count', show_plot = True):
         #color_sq =['#b3cde0','#6497b1','#005b96','#03396c','#011f4b']
         ##print(test['STATE_ABBR'][i])
         ##print("color_map: " + str(color_map[test['STATE_ABBR'][i]]))
-        print(color_map[test['STATE_ABBR'][i]])
+        # print(color_map[test['STATE_ABBR'][i]])
         ax.add_patch(PolygonPatch(poly, fc = color_sq[color_map[test['STATE_ABBR'][i]]], zorder=2 ))
         ax.axis('scaled')
     if show_plot:
@@ -185,27 +185,22 @@ def get_color_bins(geoframe, col = 'count', unified_scale = True):
     assert len(list_key) == len(list_val)
     ##print(list_val)
 
-    print(geoframe)
-    print(list_val)
+    # print(geoframe)
+    # print(list_val)
     if len(list_val) >= 1:
         if len(set(list_val)) == 1:
-            print("1 branch a")
             list_val, bins = pd.qcut(list_val, q = 1, duplicates = 'drop', retbins = True)
-            print(list_val)
-            print("1 branch b")
-            # list_val = int(list_val)
         else:
-            print("2 branch")
             list_val, bins = pd.qcut(list_val, q = 4, duplicates = 'drop', retbins = True)
         names = bins.size
         list1 = list(range(1,names))
-        print('list:' + str(list1))
-        print('bins: ' + str(bins))
-        print('bins size: ' + str(bins.size))
-        print(list_val)
+        # print('list:' + str(list1))
+        # print('bins: ' + str(bins))
+        # print('bins size: ' + str(bins.size))
+        # print(list_val)
         list_val = pd.Series(list_val)
         list_val = list_val.cat.rename_categories(list1)
-    print(list_val)
+    # print(list_val)
     ##print(list_key)
 
     for i, state in enumerate(list_key):
@@ -215,7 +210,7 @@ def get_color_bins(geoframe, col = 'count', unified_scale = True):
         if state not in temp_map:
             temp_map[state] = 0
     print("reached return")
-    print(temp_map)
+    # print(temp_map)
     return temp_map
 
     

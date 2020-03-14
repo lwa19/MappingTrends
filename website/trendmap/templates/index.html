@@ -9,6 +9,38 @@
         <div id="header">
             <h1>Input page</h1>
         </div>
+        <div class="info">
+            <p>This program allows you to see the change in tweet volume over time for US states. Please see the readme for specific information more information on its structure and inherent limitations. Note that our program will round down the duration given to fit an integer multiple of the interval length.
+            <br><br><b>Parameter limits:</b></p>
+            <table>
+                <tr>
+                    <th>Input Type</th>
+                    <th>Past</th>
+                    <th>Live</th>
+                </tr>
+                <tr>
+                    <td>Min Interval</td>
+                    <td>1 minute</td>
+                    <td>1 minute</td>
+                </tr>
+                <tr>
+                    <td>Max Interval</td>
+                    <td>1 day</td>
+                    <td>1 hour</td>
+                </tr>
+                <tr>
+                    <td>Min Duration</td>
+                    <td>2 minutes</td>
+                    <td>2 minutes</td>
+                </tr>
+                <tr>
+                    <td>Max Duration</td>
+                    <td>7 days</td>
+                    <td>6 hours</td>
+                </tr>
+            </table>
+        </div>
+
         <div class="frame">
             <form method="get">
                 {% csrf_token %}
