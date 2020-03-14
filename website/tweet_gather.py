@@ -65,6 +65,7 @@ def collect_data(search_term, mode, interval, duration):
         state_counts = convert_location(batch, mapping_dict, abbr_dict)
         tweet_data.append(state_counts)
 
+    print(tweet_data)
     return tweet_data
 
 
@@ -104,7 +105,7 @@ def time_bins(mode, now, interval, duration):
     return bins
 
 
-def search_words(input_query, now, limit=100, search_type="mixed"):
+def search_words(input_query, now, limit=200, search_type="mixed"):
     '''
     Returns 1000 English tweets containing the searched word/hashtag.
     Result contains a mix of popular and recent tweets.
