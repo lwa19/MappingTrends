@@ -70,7 +70,7 @@ class Shapefile:
 
         if len(plot_list) == 1:
             assert type(file_name) == str
-            plot_list[0].savefig('.static/Plot_pngs/' + file_name + '.png')
+            plot_list[0].savefig('./static/Plot_pngs/' + file_name + '.png')
             output_path.append('./Plot_pngs/' + file_name + '.png')
         else:
             assert (type(file_name) == list and type(file_name[0]) == str) or type(file_name) == str
