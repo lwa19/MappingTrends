@@ -1,12 +1,10 @@
 import pandas as pd
 import geopandas
 import matplotlib.pyplot as plt
-import geopy
 
 import numpy as np
 import shapefile as shp
 
-import seaborn as sns
 from descartes import PolygonPatch
 import random
 
@@ -169,7 +167,7 @@ def build_plot(shapefile_object, file_name, col = 'count', show_plot = True):
 
 def get_color_bins(geoframe, col = 'count', unified_scale = True):
     temp_map  = {}
-    temp_list = []
+    #temp_list = []    unused variable
     list_key = []
     list_val = []
     list_none = []
@@ -179,12 +177,14 @@ def get_color_bins(geoframe, col = 'count', unified_scale = True):
             #temp_list.append((row[1]['STATE_ABBR'],row[1]['count']))
             list_key.append(row[1]['STATE_ABBR'])
             list_val.append(row[1][col])
+
         else:
             ##print("appended none")
             list_none.append(row[1]['STATE_ABBR'])
 
     assert len(list_key) == len(list_val)
     ##print(list_val)
+
     print(geoframe)
     print(list_val)
     if len(list_val) >= 1:
@@ -206,21 +206,6 @@ def get_color_bins(geoframe, col = 'count', unified_scale = True):
         list_val = pd.Series(list_val)
         list_val = list_val.cat.rename_categories(list1)
     print(list_val)
-
-
-    # list_val1 = [int(x) for x in list_val]
-    # list_val2 = np.asarray(list_val1).astype(int)
-    # list_val3, bins = pd.qcut(list_val2, q = 4, duplicates = 'drop', retbins = True)
-    # print(list_val)
-    # names = bins.size
-    # list_labels = list(range(1,names))
-    # print('list:' + str(list_labels))
-    # print('bins: ' + str(bins))
-    # print('bins size: ' + str(bins.size))
-    # list_val4 = pd.Series(list_val3)
-    # list_val5 = list_val4.cat.rename_categories(list_labels)
-    # print(list_val5)
-    # list_val = list_val5.copy()
     ##print(list_key)
 
     for i, state in enumerate(list_key):
