@@ -71,10 +71,6 @@ div.slide {
     to {opacity: 1}
 }
 
-div.frame {
-    margin: 15px;
-}
-
 div.error {
     padding: 15px;
     background: #eee;
@@ -123,23 +119,33 @@ table.form input#id_query {
     font-size: 16px;
 }
 
-table.courses {
-    border: 1px solid #ddd;
+table.dataframe {
+    border: 3px solid #ddd;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+table.dataframe tr th{
+    background: #ccc;
+}
+
+table {
+    border: 1px solid #bbb;
     padding: 0px;
     margin: 0px;
 }
 
-table.courses tr th {
+table tr th {
     text-align: left;
 }
 
-table.courses tr td,
-table.courses tr th {
+table tr td,
+table tr th {
     padding: 3px;
-    font-size: 12px;
 }
 
-table.courses tr:nth-child(even) {
+table.parameters tr:nth-child(even),
+table.form tr:nth-child(even) {
     background: #eee;
 }
 

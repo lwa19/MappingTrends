@@ -12,7 +12,7 @@
         <div class="info">
             <p>This program allows you to see the change in tweet volume over time for US states. Please see the readme for more information on its structure and inherent limitations. Note that our program will round down the duration given to fit an integer multiple of the interval length.
             <br><br><b>Parameter limits:</b></p>
-            <table>
+            <table class="parameters">
                 <tr>
                     <th>Input Type</th>
                     <th>Past</th>
@@ -112,7 +112,7 @@
         <br>
 
         {% if array %}
-        <div class="data summary">
+        <div class="data">
             {{ array|safe }}
         </div>
         {% endif %}
