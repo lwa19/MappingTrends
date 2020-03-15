@@ -104,7 +104,7 @@ def time_bins(mode, now, interval, duration):
     return bins
 
 
-def search_words(input_query, now, limit=200, search_type="popular"):
+def search_words(input_query, now, limit=200, search_type="mixed"):
     '''
     Returns 1000 English tweets containing the searched word/hashtag.
     Result contains a mix of popular and recent tweets.
@@ -236,7 +236,8 @@ def sort_tweets(batch, bins, search_term, now):
             time = tweet['created_at']
         except:
             # does not add the non-tweet dictionary to the list of lists
-            break
+            continue
+
         time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
 
         # compare tweet and bin times and append to bin
