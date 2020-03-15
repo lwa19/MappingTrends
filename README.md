@@ -54,25 +54,6 @@ MappingTrends
 
 ## Workflow
 
-### Django Inputs:
- - Search term
-    - string of the word or phrase
- - Mode
-    - Past: scrape tweets from up to 7 days ago
-    - Live: stream tweets in live time
- - Time Intervals
-    - to divide the total duration into time blocks
-    - there are 3 units: minutes, hours, days
- - Duration
-    - the total time duration for streaming/scraping
-
-### Django Outputs:
- - GIS heatmap
-    - there is one heatmap for each time block
-    - they are displayed as png files in a slideshow
- - Summary stats
-    - a table of the exact numbers per state per time block
-
 ### Twitter Scraper:
  - Utilising the Twitter API
     - authentication - access tokens are obtained from Twitter Developer
@@ -107,6 +88,13 @@ MappingTrends
    - Calls master function of mapper.py to map processed data
    - Arranges output of tweet_gather into array
    - Sends array, png filepaths, form, and error outputs for rendering on page
+  - Outputs
+    - GIS heatmap
+      - there is one heatmap for each time block
+      - they are displayed as png files in a slideshow
+      - a legend is displayed below this (the legend is constant)
+    - Summary stats
+      - a table of the exact numbers per state per time block
 
 ## Challenges
 
