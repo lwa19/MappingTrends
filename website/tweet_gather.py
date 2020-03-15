@@ -100,7 +100,7 @@ def time_bins(mode, now, interval, duration):
         end = start + interval
         bins.append((start, end))
         start = end
-    print(bins)
+
     return bins
 
 
@@ -214,7 +214,9 @@ def stream_tweets(input_hashtag, duration, now):
 
 def sort_tweets(batch, bins, search_term, now):
     '''
-    Sorts a batch of tweets into given time interval bins.
+    Sorts a batch of tweets into given time interval bins. Occasionally a rate
+    limit dictionary is added instead of a tweet. This function prevents these
+    from being added.
 
     Inputs:
         tweets: a list of tweet-dictionaries
@@ -230,7 +232,11 @@ def sort_tweets(batch, bins, search_term, now):
 
     for tweet in batch:
         # get time from tweet
-        time = tweet['created_at']
+        try:
+            time = tweet['created_at']
+        except:
+            # does not add the non-tweet dictionary to the list of lists
+            break
         time = datetime.strptime(time, '%a %b %d %H:%M:%S %z %Y')
 
         # compare tweet and bin times and append to bin
