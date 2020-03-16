@@ -31,25 +31,27 @@ pip3 install pyshp
 
 ```
 MappingTrends
-| website/              	   - all of the Django implementation
-	| states_21basic   	       - all of the GIS data files *
-    	| static/          	   - website accessible files
-		    | archive/     	   - tweet jsons for each search/stream query made
-                | sorted/      - folder for storing tweets by time interval
-		    | Plot_pngs/   	   - all of the output png files
-		| main.css     	       - file used to format the website
-    | trendmap/                - all of the template and index
-		| templates/   	       - website html files
-		| views.py     	       - views file where the django input is processed and page is returned
-    | ui/                      - technical files
-		| settings.py  	       - website settings
-    | manage.py            	   - the code used to run the website
-	| tweet_gather.py      	   - scraping and parsing tweets
-	| mapper.py            	   - visualizing the parsed tweet data
-    | twitter_credentials.json - twitter access tokens
-    | uscities.csv             - data source for US cities https://simplemaps.com/data/us-cities (Basic)
-| past_files           		   - all of the past files that we no longer need
-| Project Proposal.pdf 		   - project proposal
+| website/                      - all of the Django implementation
+  | states_21basic              - all of the GIS data files *
+  | static/                     - website accessible files
+    | archive/                  - tweet jsons for each search/stream query made
+      | sorted/                 - folder for storing tweets by time interval
+      | Plot_pngs/              - all of the output png files
+    | main.css                  - file used to format the website
+    | slideshow.js              - slideshow javascript code
+  | trendmap/                   - all of the template and index
+    | templates/                - website html files
+      | index.html              - html for website page (single page)
+    | views.py                  - views file where the django input is processed and page is returned
+  | ui/                         - technical files
+    | settings.py               - website settings
+    | manage.py                 - the code used to run the website
+	| tweet_gather.py             - scraping and parsing tweets
+	| mapper.py                   - visualizing the parsed tweet data
+  | twitter_credentials.json    - twitter access tokens
+  | uscities.csv                - data source for US cities https://simplemaps.com/data/us-cities (Basic)
+| past_files                    - all of the past files that we no longer need
+| Project Proposal.pdf          - project proposal
 ```
 
 ## Workflow
