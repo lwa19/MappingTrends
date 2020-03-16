@@ -10,7 +10,7 @@ Pooja Barai (pbarai@uchicago.edu)
 
 Wesley Hsu (hsuerfan@uchicago.edu)
 
-Kunal Mahajan (xxx)
+Kunal Mahajan (kunalmahajan@uchicago.edu)
 
 Lijia Wang (lwang19@uchicago.edu)
 
@@ -24,7 +24,7 @@ pip3 install Django
 pip3 install geopandas
 pip3 install descartes
 pip3 install pyshp
-*
+pip3 install matplotlib
 ```
 
 ### file structure
@@ -74,7 +74,19 @@ MappingTrends
 	- for each tweet with an associated US state, add count to dictionary
 	- repeat for each time bin, return as list of dictionaries
 
-### GIS *
+### GIS:
+ - Creating GeoDataFrame (object of GeoPandas package)
+   - Create instance of Shapefile class in mapper.py based off of shapefile filepath
+   - Extract geodataframe embedded within shapefile
+   - Join data from returned list of dicts from Twitter Scraper to geodataframe, using State Abbreviation as join column
+ - Build Plots
+   - Create color scale for visualization by taking values from a given time bin and partitioning into quartiles
+   - Extract GIS Polygon points/attributes from GeoDataFrame
+   - Create blank plot (figure) from matplotlib.pyplot
+   - Add each polygon one at a time using calculated color value and extracted Polygon attributes
+ - Plot Display
+   - After multiple plots are built for however many time bins there are, display to User if requested
+   - Save plots as .png file in /Plot_pngs with user-given naming scheme, for use by Django
 
 ### Integration into Django
  - User Interface
@@ -110,7 +122,7 @@ MappingTrends
 
 5. Many of our earlier JSON outputs were incorrectly formatted for one reason or another. These included excessive amounts of \ escapes, the dictionaries being placed into a string, lack of indentation (not incorrect but unreadable by humans), or dictionaries being placed back to back without being in a larger list. This problem prevented other parts of our code from reading the JSON files (or the tweet outputs themselves prior to file writing). The various problems were fixed in turn and the style of JSON writing finally standardized.
 
-6. GIS*
+6. GIS had a steep learning curve in order to become familiar with both the nature of shapefiles themselves and how to integrate it with python. We had to spend a lot of time understanding the data structures of GIS such as Points, Lines, Polygons, etc. As well as how fields, attributes, records worked to embed data within a shapefile, and conversely how to extract it. We spent a long time using a previous methodology to develop plots from shapefile geometries, however, we encountered many problems with un-intuitive visualizations and extraneous lines (this could not be overcome, so we had to switch to the plotting method we use now). Much of this knowledge had to be painstakingly acquired through trial and error as many of the popular libraries for GIS are older and lacking recent support. 
 
 7. Django took a long time to really understand as it used a lot of unfamiliar concepts and the explanations available often seemed to assume more knowledge than we had. We used the PA3 Django code as a starting point both for creating our website and understanding Django beyond Lab 5, but the code there basically had no documentation and used even more unfamiliar concepts (super, kwargs, etc).
 
